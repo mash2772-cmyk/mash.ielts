@@ -62,6 +62,7 @@
 </head>
 <body class="min-h-screen pb-12">
 
+    <!-- Header Section and Tab Bar Navigation -->
     <header class="border-b border-gray-200/50 bg-white/70 backdrop-blur-md sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -141,24 +142,43 @@
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="monthly-checkpoints-grid">
-                    <!-- Cards will be injected dynamically via JavaScript to ensure data reactivity -->
+                    <!-- Cards will be injected dynamically via JavaScript -->
                 </div>
             </div>
         </section>
 
         <!-- ================= TRACKER TAB ================= -->
         <section id="tab-tracker" class="tab-content hidden space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-4">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-gray-200 pb-4">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Lịch học hàng ngày (Daily Tracker)</h2>
                     <p class="text-xs text-slate-500">Tick chọn nhiệm vụ hoàn thành mỗi ngày để rèn luyện thói quen tự giác.</p>
                 </div>
-                <!-- Week tabs switchers -->
-                <div class="flex gap-1 bg-gray-100 p-1 rounded-lg">
-                    <button onclick="switchWeek(1)" id="week-btn-1" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all bg-white text-slate-800 shadow-sm">Tuần 1</button>
-                    <button onclick="switchWeek(2)" id="week-btn-2" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 2</button>
-                    <button onclick="switchWeek(3)" id="week-btn-3" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 3</button>
-                    <button onclick="switchWeek(4)" id="week-btn-4" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 4</button>
+                
+                <!-- Joint Selector for BOTH Month and Week -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Month Selector Dropdown -->
+                    <div class="flex items-center gap-1.5 bg-gray-100/80 p-1.5 rounded-lg border border-gray-200/50">
+                        <span class="text-[10px] font-bold text-slate-500 px-1 uppercase tracking-wider">Tháng học:</span>
+                        <select id="tracker-month-select" onchange="switchTrackerMonth(this.value)" class="bg-white border border-gray-200 rounded-md py-1 px-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#869d7a]">
+                            <option value="1">Tháng 1 (Tháng 5-6)</option>
+                            <option value="2">Tháng 2 (Tháng 7)</option>
+                            <option value="3">Tháng 3 (Tháng 8)</option>
+                            <option value="4">Tháng 4 (Tháng 9)</option>
+                            <option value="5">Tháng 5 (Tháng 10)</option>
+                            <option value="6">Tháng 6 (Tháng 11)</option>
+                            <option value="7">Tháng 7 (Tháng 12)</option>
+                            <option value="8">Tháng 8 (Tháng 1)</option>
+                        </select>
+                    </div>
+
+                    <!-- Week tabs switchers -->
+                    <div class="flex gap-1 bg-gray-100 p-1 rounded-lg">
+                        <button onclick="switchWeek(1)" id="week-btn-1" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all bg-white text-slate-800 shadow-sm">Tuần 1</button>
+                        <button onclick="switchWeek(2)" id="week-btn-2" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 2</button>
+                        <button onclick="switchWeek(3)" id="week-btn-3" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 3</button>
+                        <button onclick="switchWeek(4)" id="week-btn-4" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 4</button>
+                    </div>
                 </div>
             </div>
 
@@ -182,7 +202,7 @@
                             </tr>
                         </thead>
                         <tbody id="tracker-tbody" class="divide-y divide-gray-50 text-sm">
-                            <!-- Injected dynamically based on week selected -->
+                            <!-- Injected dynamically based on week and month selected -->
                         </tbody>
                     </table>
                 </div>
@@ -191,8 +211,8 @@
                 <div class="space-y-6">
                     <!-- Self Assessment Slider Card -->
                     <div class="glass-card p-6 space-y-4">
-                        <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                            📊 Đánh giá tuần <span class="current-week-lbl">1</span>
+                        <h4 class="text-xs font-bold text-slate-800 flex flex-wrap items-center gap-1">
+                            📊 Đánh giá <span class="current-month-lbl text-[#869d7a]">Tháng 1</span> — <span class="current-week-lbl text-[#869d7a]">Tuần 1</span>
                         </h4>
                         
                         <div class="space-y-3">
@@ -216,7 +236,7 @@
 
                     <!-- Journal notes of the Week -->
                     <div class="glass-card p-6 space-y-3">
-                        <h4 class="text-sm font-bold text-slate-800">📝 Nhật ký tuần này</h4>
+                        <h4 class="text-sm font-bold text-slate-800">📝 Nhật ký tuần học</h4>
                         <div class="space-y-3">
                             <div>
                                 <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Điểm yếu lớn nhất</label>
@@ -414,7 +434,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
-                <span class="text-lg">✨</span> Lời khuyên từ AI Tutor (Gemini-3)
+                <span class="text-lg">✨</span> Lời khuyên từ AI Tutor
             </h3>
             <div id="ai-content" class="text-xs text-slate-600 leading-relaxed overflow-y-auto pr-1 flex-1 space-y-3 py-2 scrollbar-hide">
                 <!-- AI dynamic structured recommendations will print here -->
@@ -425,12 +445,29 @@
         </div>
     </div>
 
+    <!-- CUSTOM CONFIRMATION DIALOG (Avoids using native window.confirm) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/40 z-[110] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="glass-card w-full max-w-xs p-6 relative shadow-2xl bg-[#fdfbf7] text-center border border-gray-200">
+            <span class="text-3xl block mb-2">🗑️</span>
+            <h3 class="text-sm font-bold text-slate-800 mb-2">Xác nhận xóa</h3>
+            <p id="confirm-modal-msg" class="text-xs text-slate-500 mb-5 leading-relaxed">Bạn có chắc chắn muốn xóa mục này ra khỏi lịch sử lưu trữ?</p>
+            <div class="flex justify-center gap-2">
+                <button onclick="closeCustomConfirm(false)" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-gray-100 transition-colors">Hủy</button>
+                <button onclick="closeCustomConfirm(true)" class="px-4 py-2 text-xs font-bold text-white rounded-lg bg-rose-500 hover:bg-rose-600 transition-colors">Xóa</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ================= JAVASCRIPT SYSTEM ================= -->
     <script>
-        // Global variables for tab, week, category control
+        // Global variables for tab, week, month, category control
         let currentTab = 'dashboard';
-        let activeTrackerWeek = 1;
+        let activeTrackerMonth = 1; // Tracks current selected Month in Daily Tracker
+        let activeTrackerWeek = 1;  // Tracks current selected Week (1-4) in Daily Tracker
         let activeErrorCategory = 'writing';
+
+        // Custom Confirmation State Handler
+        let confirmCallback = null;
 
         // Monthly checklist content for all 8 months
         const MONTHLY_TARGETS = {
@@ -540,13 +577,13 @@
         const DEFAULT_ERROR_LOGS = {
             writing: [
                 { id: 1, type: "Lỗi chia động từ số ít/nhiều", mistake: "The number of student who fail the test are increasing.", correction: "The number of students who fail the test is increasing." },
-                { id: 2, type: "Sử dụng từ nối sai ngữ cảnh", mistake: "He failed the exam. On the contrary, he studied hard.", correction: "He failed the exam. However, he studied hard. (Hoặc Although he studied hard, he failed...)" }
+                { id: 2, type: "Sử dụng từ nối sai ngữ cảnh", mistake: "He failed the exam. On the contrary, he studied hard.", correction: "He failed the exam. However, he studied hard." }
             ],
             speaking: [
                 { id: 3, type: "Lỗi âm đuôi s/es khi nói nhanh", mistake: "She play piano very well. (Bị mất âm s)", correction: "She plays /pleɪz/ the piano very well." }
             ],
             reading: [
-                { id: 4, type: "Bẫy từ đồng nghĩa (Synonym trap)", mistake: "Chọn TRUE vì thấy từ khóa trùng lặp 100% so với câu hỏi.", correction: "Đọc kỹ toàn bộ câu văn, chú ý các từ hạn định (all, mostly, only) và đối chiếu ý chính thay vì từ khóa bề nổi." }
+                { id: 4, type: "Bẫy từ đồng nghĩa (Synonym trap)", mistake: "Chọn TRUE vì thấy từ khóa trùng lặp 100% so với câu hỏi.", correction: "Đọc kỹ toàn bộ câu văn, chú ý các từ hạn định (all, mostly, only) và đối chiếu ý chính." }
             ],
             listening: [
                 { id: 5, type: "Viết sai chính tả từ quen thuộc", mistake: "Tommorow, Accommodation (thiếu chữ 'm')", correction: "Tomorrow, Accommodation." }
@@ -571,23 +608,27 @@
                 title: "Technology",
                 words: [
                     { word: "Technological breakthrough", meaning: "Bước đột phá mang tính công nghệ" },
-                    { word: "Obsolete", meaning: "Bị lỗi thời, không còn giá trị sử dụng" },
-                    { word: "Cyber security", meaning: "An ninh mạng xã hội" }
-                ]
-            },
-            {
-                id: 3,
-                emoji: "🌱",
-                title: "Environment",
-                words: [
-                    { word: "Carbon footprint", meaning: "Lượng khí thải carbon của cá nhân/tổ chức" },
-                    { word: "Biodiversity conservation", meaning: "Bảo tồn tính đa dạng sinh học" },
-                    { word: "Eco-friendly", meaning: "Thân thiện, hòa hợp với môi trường" }
+                    { word: "Obsolete", meaning: "Bị lỗi thời, không còn giá trị sử dụng" }
                 ]
             }
         ];
 
         let mockTestChartInstance = null;
+
+        // Custom Confirmation triggers
+        function showCustomConfirm(message, callback) {
+            document.getElementById('confirm-modal-msg').innerText = message;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+            confirmCallback = callback;
+        }
+
+        function closeCustomConfirm(isConfirmed) {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            if (isConfirmed && confirmCallback) {
+                confirmCallback();
+            }
+            confirmCallback = null;
+        }
 
         // IELTS overall rounding rules helper function
         function calculateIeltsOverall(l, r, w, s) {
@@ -637,6 +678,9 @@
                 setTimeout(() => {
                     if (mockTestChartInstance) mockTestChartInstance.resize();
                 }, 100);
+            } else if (tabId === 'tracker') {
+                // Instantly sync UI states for tracker month/week on switch
+                switchTrackerMonth(activeTrackerMonth);
             }
         }
 
@@ -663,7 +707,6 @@
                 const overallVal = calculateIeltsOverall(s.list, s.read, s.write, s.speak);
                 overallData.push(overallVal);
                 
-                // Target bands matching months progression
                 if (m === 1) targetData.push(6.0);
                 else if (m >= 2 && m <= 5) targetData.push(6.5);
                 else targetData.push(7.0);
@@ -883,11 +926,26 @@
             document.getElementById('month-checkpoint-modal').classList.add('hidden');
         }
 
-        // Tracker Logic (Tabs weeks switching)
+
+        // ================= JAVASCRIPT SYSTEM: DAILY TRACKER (32 WEEKS) =================
+        
+        // Month Selector on Tracker changed
+        function switchTrackerMonth(monthNum) {
+            activeTrackerMonth = parseInt(monthNum);
+            
+            // Sync month tags across tracker layout
+            const monthText = `Tháng ${activeTrackerMonth}`;
+            document.querySelectorAll('.current-month-lbl').forEach(el => el.innerText = monthText);
+            
+            // Force reload current active week under new month context
+            switchWeek(activeTrackerWeek);
+        }
+
+        // Week selection changed
         function switchWeek(weekNum) {
             activeTrackerWeek = weekNum;
 
-            // Update buttons styling
+            // Update UI week selection button active classes
             for (let w = 1; w <= 4; w++) {
                 const btn = document.getElementById(`week-btn-${w}`);
                 if (btn) {
@@ -899,15 +957,15 @@
                 }
             }
 
-            document.querySelectorAll('.current-week-lbl').forEach(el => el.innerText = weekNum);
+            document.querySelectorAll('.current-week-lbl').forEach(el => el.innerText = `Tuần ${weekNum}`);
 
-            // Fetch or configure local state keys
-            const keyChecklist = `ielts_week_${weekNum}_checklist`;
-            const keySliders = `ielts_week_${weekNum}_perf`;
-            const keyNotes = `ielts_week_${weekNum}_notes`;
+            // Generate strict distinct storage key matching both Month AND Week context (32 distinct weeks!)
+            const keyChecklist = `ielts_m${activeTrackerMonth}_w${weekNum}_checklist`;
+            const keySliders = `ielts_m${activeTrackerMonth}_w${weekNum}_perf`;
+            const keyNotes = `ielts_m${activeTrackerMonth}_w${weekNum}_notes`;
 
+            // If no storage exist, initialize empty templates
             if (!localStorage.getItem(keyChecklist)) {
-                // Initialize clean matrix (7 days x 8 tasks)
                 const freshMatrix = {};
                 ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].forEach(day => {
                     freshMatrix[day] = [false, false, false, false, false, false, false, false];
@@ -938,9 +996,9 @@
             document.getElementById('notes-mistakes').value = notes.mistakes || "";
         }
 
+        // Render standard daily tracker table grid for active month and week
         function renderTrackerTable() {
-            const weekNum = activeTrackerWeek;
-            const matrix = JSON.parse(localStorage.getItem(`ielts_week_${weekNum}_checklist`));
+            const matrix = JSON.parse(localStorage.getItem(`ielts_m${activeTrackerMonth}_w${activeTrackerWeek}_checklist`));
             const tbody = document.getElementById('tracker-tbody');
             tbody.innerHTML = '';
 
@@ -962,14 +1020,14 @@
                 const isAllDone = checkedCount === arr.length;
 
                 const tr = document.createElement('tr');
-                tr.className = `hover:bg-slate-50 transition-colors ${isAllDone ? 'bg-emerald-50/20' : ''}`;
+                tr.className = `hover:bg-slate-50/70 transition-colors ${isAllDone ? 'bg-emerald-50/30' : ''}`;
 
                 let rowHtml = `<td class="py-3 pl-2 font-bold text-slate-700 text-xs">${VietnameseDays[day]}</td>`;
 
                 for (let i = 0; i < 8; i++) {
                     const checked = arr[i] ? 'checked' : '';
                     rowHtml += `<td class="py-3 text-center">
-                        <input type="checkbox" onchange="toggleDayTask('${day}', ${i}, this.checked)" ${checked} class="h-4 w-4 rounded border-gray-300 text-[#869d7a] focus:ring-[#869d7a]">
+                        <input type="checkbox" onchange="toggleDayTask('${day}', ${i}, this.checked)" ${checked} class="h-4 w-4 rounded border-gray-300 text-[#869d7a] focus:ring-[#869d7a] transition-all cursor-pointer">
                     </td>`;
                 }
 
@@ -982,25 +1040,26 @@
             });
         }
 
+        // Toggle state of daily skill checkpoint
         function toggleDayTask(day, index, checked) {
-            const weekNum = activeTrackerWeek;
-            const matrix = JSON.parse(localStorage.getItem(`ielts_week_${weekNum}_checklist`));
+            const matrix = JSON.parse(localStorage.getItem(`ielts_m${activeTrackerMonth}_w${activeTrackerWeek}_checklist`));
             
             if (!matrix[day]) {
                 matrix[day] = [false, false, false, false, false, false, false, false];
             }
 
             matrix[day][index] = checked;
-            localStorage.setItem(`ielts_week_${weekNum}_checklist`, JSON.stringify(matrix));
+            localStorage.setItem(`ielts_m${activeTrackerMonth}_w${activeTrackerWeek}_checklist`, JSON.stringify(matrix));
 
-            // Visual feedback update inline
+            // Fast inline feedback update
             const checkedCount = matrix[day].filter(x => x).length;
             const el = document.getElementById(`day-ratio-${day}`);
             if (el) {
-                el.innerHTML = `<span class="${checkedCount === 8 ? 'text-emerald-600' : 'text-slate-400'}">${checkedCount}/8</span>`;
+                el.innerHTML = `<span class="${checkedCount === 8 ? 'text-emerald-600 font-extrabold' : 'text-slate-400'}">${checkedCount}/8</span>`;
             }
         }
 
+        // Save slider stats inside local database
         function updatePerformanceIndicators() {
             const valC = document.getElementById('slider-consistency').value;
             const valF = document.getElementById('slider-focus').value;
@@ -1008,26 +1067,25 @@
             document.getElementById('consistency-val').innerText = `${valC}/10`;
             document.getElementById('focus-val').innerText = `${valF}/10`;
 
-            // Persistent save sliders indicators
-            const weekNum = activeTrackerWeek;
-            localStorage.setItem(`ielts_week_${weekNum}_perf`, JSON.stringify({
+            localStorage.setItem(`ielts_m${activeTrackerMonth}_w${activeTrackerWeek}_perf`, JSON.stringify({
                 consistency: parseInt(valC),
                 focus: parseInt(valF)
             }));
         }
 
+        // Persistent save notes text
         function saveCurrentWeekChanges() {
-            const weekNum = activeTrackerWeek;
             const weakness = document.getElementById('notes-weakness').value;
             const mistakes = document.getElementById('notes-mistakes').value;
 
-            localStorage.setItem(`ielts_week_${weekNum}_notes`, JSON.stringify({
+            localStorage.setItem(`ielts_m${activeTrackerMonth}_w${activeTrackerWeek}_notes`, JSON.stringify({
                 weakness: weakness,
                 mistakes: mistakes
             }));
         }
 
-        // Error Logs Logic
+
+        // ================= ERROR LOGS LOGIC =================
         function switchErrorLogCategory(category) {
             activeErrorCategory = category;
 
@@ -1065,7 +1123,7 @@
             targetArr.forEach(item => {
                 container.innerHTML += `
                     <div class="glass-card p-5 relative overflow-hidden group">
-                        <button onclick="deleteErrorLog(${item.id})" class="absolute right-4 top-4 text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs" title="Xóa lỗi">
+                        <button onclick="triggerDeleteErrorLog(${item.id})" class="absolute right-4 top-4 text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs" title="Xóa lỗi">
                             🗑️
                         </button>
                         <span class="text-[10px] font-bold text-[#cb8b8b] uppercase tracking-wider block mb-1">⚠️ ${item.type}</span>
@@ -1120,22 +1178,23 @@
             localStorage.setItem('ielts_error_logs', JSON.stringify(logs));
             closeAddErrorModal();
             
-            // Auto switch to modified view
             switchErrorLogCategory(skill);
         }
 
-        function deleteErrorLog(id) {
-            if (!confirm('Bạn có chắc chắn muốn xóa mục ghi chú lỗi này?')) return;
-
-            const logs = JSON.parse(localStorage.getItem('ielts_error_logs')) || DEFAULT_ERROR_LOGS;
-            if (logs[activeErrorCategory]) {
-                logs[activeErrorCategory] = logs[activeErrorCategory].filter(x => x.id !== id);
-                localStorage.setItem('ielts_error_logs', JSON.stringify(logs));
-                renderErrorLogs();
-            }
+        // Custom confirm deletion error log
+        function triggerDeleteErrorLog(id) {
+            showCustomConfirm('Bạn có chắc chắn muốn xóa mục ghi chú lỗi này ra khỏi danh sách lưu trữ?', () => {
+                const logs = JSON.parse(localStorage.getItem('ielts_error_logs')) || DEFAULT_ERROR_LOGS;
+                if (logs[activeErrorCategory]) {
+                    logs[activeErrorCategory] = logs[activeErrorCategory].filter(x => x.id !== id);
+                    localStorage.setItem('ielts_error_logs', JSON.stringify(logs));
+                    renderErrorLogs();
+                }
+            });
         }
 
-        // Vocabulary Bank Logic
+
+        // ================= VOCABULARY BANK LOGIC =================
         function renderVocabTopics() {
             const container = document.getElementById('vocab-topics-container');
             container.innerHTML = '';
@@ -1145,7 +1204,7 @@
             topics.forEach(topic => {
                 container.innerHTML += `
                     <div class="glass-card p-5 relative overflow-hidden group">
-                        <button onclick="deleteVocabTopic(${topic.id})" class="absolute right-4 top-4 text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs" title="Xóa chủ đề">
+                        <button onclick="triggerDeleteVocabTopic(${topic.id})" class="absolute right-4 top-4 text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs" title="Xóa chủ đề">
                             🗑️
                         </button>
                         <div class="flex items-center gap-2 mb-3">
@@ -1182,7 +1241,6 @@
             const emoji = document.getElementById('topic-input-emoji').value;
             const rawWords = document.getElementById('topic-input-words').value;
 
-            // Parse lines to structure
             const lines = rawWords.split('\n');
             const wordsList = [];
 
@@ -1214,16 +1272,18 @@
             renderVocabTopics();
         }
 
-        function deleteVocabTopic(id) {
-            if (!confirm('Bạn có chắc chắn muốn xóa chủ đề từ vựng này?')) return;
-
-            let topics = JSON.parse(localStorage.getItem('ielts_vocab_topics')) || DEFAULT_VOCAB_TOPICS;
-            topics = topics.filter(x => x.id !== id);
-            localStorage.setItem('ielts_vocab_topics', JSON.stringify(topics));
-            renderVocabTopics();
+        // Custom confirm deletion vocabulary topic
+        function triggerDeleteVocabTopic(id) {
+            showCustomConfirm('Bạn có chắc chắn muốn xóa toàn bộ chủ đề từ vựng này?', () => {
+                let topics = JSON.parse(localStorage.getItem('ielts_vocab_topics')) || DEFAULT_VOCAB_TOPICS;
+                topics = topics.filter(x => x.id !== id);
+                localStorage.setItem('ielts_vocab_topics', JSON.stringify(topics));
+                renderVocabTopics();
+            });
         }
 
-        // Simulated AI Strategic Tutor recommendations Engine
+
+        // ================= AI STRATEGIC TUTOR DISPATCHER =================
         const AI_ADVICE_DATABASE = {
             1: "### ✨ CHIẾN LƯỢC THÁNG 1: XÂY NỀN & SỬA LỖI\n\n- **Trọng tâm Ngữ pháp:** Đừng nôn nóng làm đề thi thật. Hãy học chắc cách viết câu đơn, câu ghép và câu phức không lỗi trước. Sửa triệt để lỗi chia động từ.\n- **Nghe chính tả:** Hãy mở các hội thoại ngắn (Cambridge Section 1 hoặc BBC Learning English) để luyện chép chính tả mỗi ngày 15 phút. Điều này cải thiện khả năng lọc âm chính xác.",
             2: "### ✨ CHIẾN LƯỢC THÁNG 2: ĐỊNH HƯỚNG FORMAT\n\n- **Hiểu cấu trúc bài:** Bạn cần ghi nhớ chi tiết cấu trúc bài thi, dạng câu hỏi Listening & Reading để có phản xạ nhanh.\n- **Speaking Part 1:** Đừng cố trả lời quá dài hoặc nhồi nhét từ vựng đao to búa lớn. Tập nói trôi chảy, đúng ngữ pháp và phát âm rõ ràng phụ âm đuôi (s/es/ed).",
@@ -1248,7 +1308,7 @@
                 .replace(/### (.*)/g, '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">$1</h4>')
                 .replace(/\- \*\*(.*?)\*\*(.*)/g, '<div class="mb-2"><strong class="text-[#869d7a]">$1</strong>$2</div>');
 
-            // Simulate typing effect
+            // Simulate parsing/typing latency
             setTimeout(() => {
                 content.innerHTML = formattedText;
             }, 600);
@@ -1258,16 +1318,21 @@
             document.getElementById('ai-modal').classList.add('hidden');
         }
 
-        // Initial setup on Window Load
+
+        // ================= SYSTEM INITIALIZER =================
         window.onload = function () {
             // Setup Database keys
             initializeDatabase();
 
-            // Set up views
+            // Set up initial views
             switchTab('dashboard');
             renderMonthlyCheckpointsGrid();
             renderMockChart();
-            switchWeek(1);
+            
+            // Sync Daily Tracker Selector and start rendering
+            document.getElementById('tracker-month-select').value = activeTrackerMonth;
+            switchTrackerMonth(activeTrackerMonth);
+
             renderErrorLogs();
             renderVocabTopics();
         };
