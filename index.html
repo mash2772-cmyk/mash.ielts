@@ -3,508 +3,1092 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IELTS Band 7 Tracker - 8 Months Journey</title>
+    <title>IELTS BAND 7 — STUDY TRACKING CANVAS (8 THÁNG)</title>
+    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Load Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        :root {
-            --bg-primary: #fdfbf7;
-            --text-main: #4a5568;
-            --accent-sage: #869d7a;
-            --accent-sand: #e2d1c3;
-            --accent-clay: #d4a373;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-main);
+            background-color: #fdfbf7; /* Sand light warm background */
+            color: #334155;
         }
-
         .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(226, 209, 195, 0.5);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
             border-radius: 1rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
         }
-
+        .glass-card:hover {
+            box-shadow: 0 10px 40px rgba(134, 157, 122, 0.08);
+        }
         .chart-container {
             position: relative;
+            height: 320px;
             width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 350px;
-            max-height: 400px;
         }
-
-        .nav-btn.active {
-            background-color: var(--accent-sage);
-            color: white;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-
-        input[type="checkbox"]:checked {
-            accent-color: var(--accent-sage);
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
         }
-
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Style for month card interactive transitions */
+        .month-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .month-card:hover {
+            transform: translateY(-4px);
         }
     </style>
 </head>
 <body class="min-h-screen pb-12">
-    <!-- Chosen Palette: Warm Earthy Neutrals (Sage, Sand, Clay) -->
-    <!-- Application Structure Plan: 
-        1. Dashboard (Overview): Tóm tắt tiến trình 8 tháng, biểu đồ Mock Test để thấy sự thay đổi điểm số.
-        2. Study Tracker: Bộ đếm theo tuần (Week 1-4) với các task hàng ngày, sử dụng localStorage để lưu dữ liệu.
-        3. Error Logs & Vocab: Hệ thống tab để ghi lại lỗi sai (Writing, Speaking, Reading, Listening) và kho từ vựng.
-        4. Final Check: Checklist cho tháng cuối cùng và động lực.
-        Lý do chọn cấu trúc này: Giúp người dùng không bị ngợp bởi lượng thông tin khổng lồ của 8 tháng, tập trung vào nhiệm vụ hiện tại nhưng vẫn nắm bắt được bức tranh tổng thể.
-    -->
-    <!-- Visualization & Content Choices:
-        - Chart.js (Line Chart): Theo dõi điểm Mock Test (L/R/W/S) qua thời gian.
-        - Progress Bar: Hiển thị tiến độ 8 tháng.
-        - Interactive Grid: Daily Tracker cho phép tick hoàn thành.
-        - Tabbed Interface: Tiết kiệm không gian cho Error Logs và Vocabulary.
-        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. 
-    -->
 
-    <nav class="sticky top-0 z-50 bg-[#fdfbf7]/80 backdrop-blur-md border-b border-sand/30 py-4">
-        <div class="container mx-auto px-4 flex flex-wrap justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-sage rounded-full flex items-center justify-center text-white font-bold" style="background-color: #869d7a;">I</div>
-                <h1 class="text-xl font-semibold tracking-tight">IELTS Band 7 Canvas</h1>
+    <header class="border-b border-gray-200/50 bg-white/70 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🎯</span>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800 tracking-tight">IELTS BAND 7</h1>
+                    <p class="text-xs text-gray-500">8-Month Integrated Tracking Canvas</p>
+                </div>
             </div>
-            <div class="flex gap-2 mt-2 sm:mt-0 overflow-x-auto pb-1 scrollbar-hide">
-                <button onclick="switchTab('dashboard')" class="nav-btn active px-4 py-2 rounded-full text-sm font-medium transition-all">Tổng quan</button>
-                <button onclick="switchTab('tracker')" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition-all">Lịch học</button>
-                <button onclick="switchTab('logs')" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition-all">Nhật ký lỗi</button>
-                <button onclick="switchTab('vocab')" class="nav-btn px-4 py-2 rounded-full text-sm font-medium transition-all">Từ vựng</button>
-            </div>
+            
+            <!-- Tab Navigation Menu -->
+            <nav class="flex gap-1 bg-gray-100/80 p-1 rounded-xl">
+                <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-700 bg-white shadow-sm">
+                    📊 Dashboard
+                </button>
+                <button onclick="switchTab('tracker')" id="tab-btn-tracker" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all text-gray-500 hover:text-slate-700">
+                    📅 Lịch Học
+                </button>
+                <button onclick="switchTab('error-logs')" id="tab-btn-error-logs" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all text-gray-500 hover:text-slate-700">
+                    ❌ Nhật Ký Lỗi
+                </button>
+                <button onclick="switchTab('vocabulary')" id="tab-btn-vocabulary" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all text-gray-500 hover:text-slate-700">
+                    📚 Từ Vựng
+                </button>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <main class="container mx-auto px-4 mt-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         
-        <!-- SECTION: DASHBOARD -->
-        <section id="dashboard-section" class="tab-content block">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2">Chào mừng bạn đến với hành trình Band 7.0</h2>
-                <p class="text-gray-500">Hệ thống này giúp bạn duy trì sự kiên trì (Consistency) trong suốt 8 tháng ôn luyện.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <!-- ================= DASHBOARD TAB ================= -->
+        <section id="tab-dashboard" class="tab-content block space-y-8">
+            
+            <!-- Quick KPI and Chart Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Overall Progress Indicator Card -->
                 <div class="glass-card p-6 flex flex-col justify-between">
                     <div>
-                        <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Tiến độ 8 tháng</h3>
-                        <div class="flex items-end gap-2 mb-2">
-                            <span class="text-4xl font-bold text-sage" style="color: #869d7a;">12%</span>
-                            <span class="text-gray-400 pb-1">hoàn thành</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Tiến trình tổng thể</span>
+                        <div class="flex items-end gap-2 mt-2">
+                            <span id="overall-progress-text" class="text-5xl font-black text-[#869d7a]">0%</span>
+                            <span class="text-xs text-slate-400 mb-2 font-medium">hoàn thành lộ trình</span>
                         </div>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                            Tiến độ được cập nhật dựa trên tổng số lượng các nhiệm vụ trọng tâm đã tích hoàn thành trong 8 tháng học bên dưới.
+                        </p>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="h-2 rounded-full" style="width: 12%; background-color: #869d7a;"></div>
+                    <div class="mt-6">
+                        <div class="w-full bg-gray-200/60 rounded-full h-3 overflow-hidden">
+                            <div id="overall-progress-bar" class="h-3 rounded-full transition-all duration-500 bg-[#869d7a]" style="width: 0%;"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="glass-card p-6 col-span-1 md:col-span-2">
-                    <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Mock Test Trend</h3>
+                <!-- Live Analytical Chart Card -->
+                <div class="glass-card p-6 lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Xu hướng điểm số</span>
+                            <h3 class="text-base font-bold text-slate-800">Biểu đồ tiến triển Mock Test</h3>
+                        </div>
+                        <button onclick="openMockScoresModal()" class="text-xs bg-[#869d7a]/10 hover:bg-[#869d7a]/20 text-[#869d7a] px-3 py-2 rounded-lg font-bold transition-all flex items-center gap-1.5">
+                            📊 Cập nhật điểm
+                        </button>
+                    </div>
                     <div class="chart-container">
                         <canvas id="mockTestChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <h3 class="text-lg font-semibold mb-4">Lộ trình 8 tháng (Monthly Checkpoints)</h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            <div class="glass-card p-4 border-l-4 border-sage relative group" style="border-left-color: #869d7a;">
-                <span class="text-xs font-bold text-sage" style="color: #869d7a;">Tháng 1 (Tháng 5-6)</span>
-                <p class="text-sm font-medium">Build nền + Fix Grammar</p>
-                <button onclick="askAI('Tháng 1: Build nền + Fix Grammar')" class="absolute top-2 right-2 text-sage opacity-0 group-hover:opacity-100 transition-opacity" title="Hỏi AI chiến lược">✨</button>
+            <!-- 8 Months Curriculum Section -->
+            <div>
+                <div class="mb-4">
+                    <h2 class="text-lg font-bold text-slate-800">Lộ trình học tập & Kiểm tra mốc (8 Tháng)</h2>
+                    <p class="text-xs text-slate-500">Bấm vào từng tháng dưới đây để xem danh sách nhiệm vụ trọng tâm cụ thể và tích chọn cập nhật tiến độ.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="monthly-checkpoints-grid">
+                    <!-- Cards will be injected dynamically via JavaScript to ensure data reactivity -->
+                </div>
             </div>
-            <div class="glass-card p-4 border-l-4 border-sand relative group" style="border-left-color: #e2d1c3;">
-                <span class="text-xs font-bold text-gray-500">Tháng 2 (Tháng 7)</span>
-                <p class="text-sm font-medium">6.5 Stable</p>
-                <button onclick="askAI('Tháng 2: 6.5 Stable')" class="absolute top-2 right-2 text-sage opacity-0 group-hover:opacity-100 transition-opacity" title="Hỏi AI chiến lược">✨</button>
-            </div>
-            <div class="glass-card p-4 border-l-4 border-clay relative group" style="border-left-color: #d4a373;">
-                <span class="text-xs font-bold text-gray-500">Tháng 3 (Tháng 8)</span>
-                <p class="text-sm font-medium">Writing/Speaking</p>
-                <button onclick="askAI('Tháng 3: Improve Writing/Speaking')" class="absolute top-2 right-2 text-sage opacity-0 group-hover:opacity-100 transition-opacity" title="Hỏi AI chiến lược">✨</button>
-            </div>
-            <div class="glass-card p-4 border-l-4 border-gray-300 relative group">
-                <span class="text-xs font-bold text-gray-500">Tháng 4 (Tháng 9)</span>
-                <p class="text-sm font-medium">L/R chạm mốc 7.0</p>
-                <button onclick="askAI('Tháng 4: L/R chạm mốc 7.0')" class="absolute top-2 right-2 text-sage opacity-0 group-hover:opacity-100 transition-opacity" title="Hỏi AI chiến lược">✨</button>
-            </div>
-            <div class="glass-card p-4 border-l-4 border-gray-300 relative group">
-                <span class="text-xs font-bold text-gray-500">Tháng 5 (Tháng 10)</span>
-                <p class="text-sm font-medium">Mock overall ~6.5-7</p>
-                <button onclick="askAI('Tháng 5: Mock overall ~6.5-7')" class="absolute top-2 right-2 text-sage opacity-0 group-hover:opacity-100 transition-opacity" title="Hỏi AI chiến lược">✨</button>
-            </div>
-            <div class="glass-card p-4 border-l-4 border-gray-300 relative group">
-                <span class="text-xs font-bold text-gray-500">Tháng 6 (Tháng 11)</span>
-                <p class="text-sm font-medium">Band 7 stable hơn</p>
-                <button onclick="askAI('Tháng 6: Band 7 stable hơn')" class="absolute top-2 right-2 text-sage opacity-0 group-hover:opacity-100 transition-opacity" title="Hỏi AI chiến lược">✨</button>
-            </div>
-            <div class="glass-card p-4 border-l-4 border-gray-300 relative group">
-                <span class="text-xs font-bold text-gray-500">Tháng 7 (Tháng 12)</span>
-                <p class="text-sm font-medium">Optimize test strategy</p>
-                <button onclick="askAI('Tháng 7: Optimize test strategy')" class="absolute top-2 right-2 text-sage opacity-0 group-hover:opacity-100 transition-opacity" title="Hỏi AI chiến lược">✨</button>
-            </div>
-            <div class="glass-card p-4 border-l-4 border-gray-300 relative group">
-                <span class="text-xs font-bold text-gray-500">Tháng 8 (Tháng 1)</span>
-                <p class="text-sm font-medium">Ready for exam</p>
-                <button onclick="askAI('Tháng 8: Ready for exam')" class="absolute top-2 right-2 text-sage opacity-0 group-hover:opacity-100 transition-opacity" title="Hỏi AI chiến lược">✨</button>
-            </div>
-        </div>
         </section>
 
-        <!-- SECTION: STUDY TRACKER -->
-        <section id="tracker-section" class="tab-content hidden">
-            <div class="flex justify-between items-center mb-6">
+        <!-- ================= TRACKER TAB ================= -->
+        <section id="tab-tracker" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-4">
                 <div>
-                    <h2 class="text-2xl font-bold">Daily Study Tracker</h2>
-                    <p class="text-sm text-gray-500 italic">"Consistency > Motivation"</p>
+                    <h2 class="text-lg font-bold text-slate-800">Lịch học hàng ngày (Daily Tracker)</h2>
+                    <p class="text-xs text-slate-500">Tick chọn nhiệm vụ hoàn thành mỗi ngày để rèn luyện thói quen tự giác.</p>
                 </div>
-                <select id="weekSelector" class="bg-white border border-sand px-4 py-2 rounded-lg text-sm">
-                    <option value="1">Tuần 1</option>
-                    <option value="2">Tuần 2</option>
-                    <option value="3">Tuần 3</option>
-                    <option value="4">Tuần 4</option>
-                </select>
+                <!-- Week tabs switchers -->
+                <div class="flex gap-1 bg-gray-100 p-1 rounded-lg">
+                    <button onclick="switchWeek(1)" id="week-btn-1" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all bg-white text-slate-800 shadow-sm">Tuần 1</button>
+                    <button onclick="switchWeek(2)" id="week-btn-2" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 2</button>
+                    <button onclick="switchWeek(3)" id="week-btn-3" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 3</button>
+                    <button onclick="switchWeek(4)" id="week-btn-4" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800">Tuần 4</button>
+                </div>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full glass-card overflow-hidden">
-                    <thead class="bg-sand/20" style="background-color: rgba(226, 209, 195, 0.2);">
-                        <tr>
-                            <th class="p-4 text-left text-xs font-bold uppercase tracking-wider">Thứ</th>
-                            <th class="p-4 text-center text-xs font-bold uppercase">List.</th>
-                            <th class="p-4 text-center text-xs font-bold uppercase">Read.</th>
-                            <th class="p-4 text-center text-xs font-bold uppercase">Writ.</th>
-                            <th class="p-4 text-center text-xs font-bold uppercase">Speak.</th>
-                            <th class="p-4 text-center text-xs font-bold uppercase">Vocab</th>
-                            <th class="p-4 text-center text-xs font-bold uppercase">Gram.</th>
-                            <th class="p-4 text-center text-xs font-bold uppercase">Shadow.</th>
-                            <th class="p-4 text-center text-xs font-bold uppercase">Review</th>
+            <!-- Interactive grid workspace for current selected week -->
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                <!-- Checklist grid -->
+                <div class="glass-card p-6 xl:col-span-3 overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr class="border-b border-gray-100 text-xs text-slate-400 uppercase font-bold">
+                                <th class="pb-3 pl-2">Thứ</th>
+                                <th class="pb-3 text-center">Listening</th>
+                                <th class="pb-3 text-center">Reading</th>
+                                <th class="pb-3 text-center">Writing</th>
+                                <th class="pb-3 text-center">Speaking</th>
+                                <th class="pb-3 text-center">Vocab</th>
+                                <th class="pb-3 text-center">Grammar</th>
+                                <th class="pb-3 text-center">Shadowing</th>
+                                <th class="pb-3 text-center">Review</th>
+                                <th class="pb-3 text-center pr-2">Hoàn tất</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracker-tbody" class="divide-y divide-gray-50 text-sm">
+                            <!-- Injected dynamically based on week selected -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Self Review & Sidebars of the Selected Week -->
+                <div class="space-y-6">
+                    <!-- Self Assessment Slider Card -->
+                    <div class="glass-card p-6 space-y-4">
+                        <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                            📊 Đánh giá tuần <span class="current-week-lbl">1</span>
+                        </h4>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
+                                    <span>Mức độ đều đặn (Consistency)</span>
+                                    <span id="consistency-val" class="font-bold text-[#869d7a]">8/10</span>
+                                </div>
+                                <input id="slider-consistency" oninput="updatePerformanceIndicators()" type="range" min="1" max="10" value="8" class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#869d7a]">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold text-slate-500 mb-1">
+                                    <span>Độ tập trung (Focus level)</span>
+                                    <span id="focus-val" class="font-bold text-[#869d7a]">7/10</span>
+                                </div>
+                                <input id="slider-focus" oninput="updatePerformanceIndicators()" type="range" min="1" max="10" value="7" class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#869d7a]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Journal notes of the Week -->
+                    <div class="glass-card p-6 space-y-3">
+                        <h4 class="text-sm font-bold text-slate-800">📝 Nhật ký tuần này</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Điểm yếu lớn nhất</label>
+                                <textarea id="notes-weakness" onchange="saveCurrentWeekChanges()" rows="2" placeholder="Ví dụ: Chưa quản lý tốt thời gian phần Reading..." class="w-full text-xs p-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a]/50 focus:border-[#869d7a] bg-white/50"></textarea>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Lỗi sai Speaking & Listening</label>
+                                <textarea id="notes-mistakes" onchange="saveCurrentWeekChanges()" rows="2" placeholder="Ví dụ: Thiếu âm đuôi 's' khi nói, nghe nhầm số ít/nhiều..." class="w-full text-xs p-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a]/50 focus:border-[#869d7a] bg-white/50"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ERROR LOGS TAB ================= -->
+        <section id="tab-error-logs" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Nhật ký sửa lỗi sai (Error Logs)</h2>
+                    <p class="text-xs text-slate-500">Ghi lại chi tiết lỗi để không lặp lại trong lần làm bài tiếp theo.</p>
+                </div>
+                <button onclick="openAddErrorModal()" class="text-xs bg-[#869d7a] text-white px-4 py-2 rounded-lg font-bold shadow-md hover:bg-[#728867] transition-all flex items-center gap-1.5">
+                    ➕ Thêm lỗi mới
+                </button>
+            </div>
+
+            <!-- Error Log Category Tabs -->
+            <div class="flex gap-2 border-b border-gray-100 pb-1">
+                <button onclick="switchErrorLogCategory('writing')" id="err-tab-writing" class="px-4 py-2 text-xs font-bold border-b-2 border-[#869d7a] text-[#869d7a]">Writing</button>
+                <button onclick="switchErrorLogCategory('speaking')" id="err-tab-speaking" class="px-4 py-2 text-xs font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600">Speaking</button>
+                <button onclick="switchErrorLogCategory('reading')" id="err-tab-reading" class="px-4 py-2 text-xs font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600">Reading</button>
+                <button onclick="switchErrorLogCategory('listening')" id="err-tab-listening" class="px-4 py-2 text-xs font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600">Listening</button>
+            </div>
+
+            <!-- Reactive Category Error Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="error-logs-container">
+                <!-- Dynamically generated error blocks -->
+            </div>
+        </section>
+
+        <!-- ================= VOCABULARY TAB ================= -->
+        <section id="tab-vocabulary" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Kho Từ vựng cốt lõi theo chủ đề</h2>
+                    <p class="text-xs text-slate-500">Mở rộng vốn từ vựng, Collocations, Idioms cho từng chủ đề lớn trong IELTS.</p>
+                </div>
+                <button onclick="openAddTopicModal()" class="text-xs bg-[#869d7a] text-white px-4 py-2 rounded-lg font-bold shadow-md hover:bg-[#728867] transition-all flex items-center gap-1.5">
+                    ➕ Thêm chủ đề mới
+                </button>
+            </div>
+
+            <!-- Dynamic Topics Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="vocab-topics-container">
+                <!-- Vocab cards populated dynamically -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= MODAL DIALOGS AND WINDOWS ================= -->
+    
+    <!-- MODAL 1: Update Mock Test Scores -->
+    <div id="mock-scores-modal" class="fixed inset-0 bg-black/45 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="glass-card w-full max-w-3xl p-6 relative shadow-2xl bg-[#fdfbf7] max-h-[90vh] flex flex-col">
+            <button onclick="closeMockScoresModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="mb-4">
+                <span class="text-xs font-bold uppercase text-[#869d7a]">Bảng Điểm số</span>
+                <h3 class="text-lg font-bold text-slate-800">Cập nhật điểm thi thử (Mock Test)</h3>
+                <p class="text-xs text-gray-400">Thay đổi điểm từng kỹ năng để vẽ lại biểu đồ. Điểm Overall tự động tính và làm tròn theo chuẩn IELTS.</p>
+            </div>
+
+            <!-- Scrollable Table Container -->
+            <div class="overflow-y-auto pr-1 flex-1">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-200 text-[11px] font-bold uppercase text-slate-400">
+                            <th class="py-2">Tháng</th>
+                            <th class="py-2 text-center">Listening</th>
+                            <th class="py-2 text-center">Reading</th>
+                            <th class="py-2 text-center">Writing</th>
+                            <th class="py-2 text-center">Speaking</th>
+                            <th class="py-2 text-center text-[#869d7a]">Overall</th>
                         </tr>
                     </thead>
-                    <tbody id="trackerBody" class="divide-y divide-sand/20">
-                        <!-- Content generated by JS -->
+                    <tbody id="mock-scores-tbody" class="divide-y divide-gray-100">
+                        <!-- Injected dynamically via JS -->
                     </tbody>
                 </table>
             </div>
 
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="glass-card p-6">
-                    <h3 class="font-bold mb-4 flex items-center gap-2">
-                        <span>📝</span> Weekly Notes
-                    </h3>
-                    <textarea class="w-full h-40 p-3 bg-transparent border border-sand rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sage" placeholder="Ghi lại điểm yếu nhất tuần này, từ vựng mới tâm đắc..."></textarea>
-                </div>
-                <div class="glass-card p-6">
-                    <h3 class="font-bold mb-4 flex items-center gap-2">
-                        <span>📊</span> Weekly Performance
-                    </h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-xs mb-1"><span>Tập trung (Focus)</span><span id="val-focus">8/10</span></div>
-                            <input type="range" min="1" max="10" value="8" class="w-full accent-sage" oninput="document.getElementById('val-focus').innerText = this.value + '/10'">
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs mb-1"><span>Kỷ luật (Consistency)</span><span id="val-cons">7/10</span></div>
-                            <input type="range" min="1" max="10" value="7" class="w-full accent-sage" oninput="document.getElementById('val-cons').innerText = this.value + '/10'">
-                        </div>
-                        <button class="w-full mt-4 bg-sage text-white py-2 rounded-lg text-sm font-bold shadow-sm" style="background-color: #869d7a;">Lưu đánh giá tuần</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: ERROR LOGS -->
-        <section id="logs-section" class="tab-content hidden">
-            <h2 class="text-2xl font-bold mb-6">Nhật ký lỗi sai (Error Logs)</h2>
-            
-            <div class="flex gap-4 mb-6 overflow-x-auto scrollbar-hide">
-                <button onclick="switchLog('writing')" class="log-tab-btn active border-b-2 border-sage px-4 py-2 font-medium" style="border-bottom-color: #869d7a;">Writing</button>
-                <button onclick="switchLog('speaking')" class="log-tab-btn px-4 py-2 font-medium text-gray-400">Speaking</button>
-                <button onclick="switchLog('reading')" class="log-tab-btn px-4 py-2 font-medium text-gray-400">Reading</button>
-                <button onclick="switchLog('listening')" class="log-tab-btn px-4 py-2 font-medium text-gray-400">Listening</button>
-            </div>
-
-            <!-- WRITING LOG -->
-            <div id="writing-log" class="log-content block">
-                <div class="glass-card overflow-hidden">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50/50">
-                            <tr>
-                                <th class="p-4 text-left">Loại lỗi</th>
-                                <th class="p-4 text-left">Ví dụ sai</th>
-                                <th class="p-4 text-left">Sửa lại đúng</th>
-                            </tr>
-                        </thead>
-                        <tbody id="writing-tbody" class="divide-y divide-sand/20">
-                            <tr>
-                                <td class="p-4 font-semibold">Grammar</td>
-                                <td class="p-4 text-red-500/80 italic">"He go to school..."</td>
-                                <td class="p-4 text-sage font-medium">"He goes to school..."</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-semibold">Coherence</td>
-                                <td class="p-4 text-red-500/80 italic">Lặp từ "Because" quá nhiều</td>
-                                <td class="p-4 text-sage font-medium">Dùng: "Due to", "Owing to", "As a result"</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="p-4 bg-sage/5 cursor-pointer hover:bg-sage/10 transition-colors" onclick="openAddErrorModal('writing')">
-                        <button class="text-xs font-bold uppercase text-sage flex items-center gap-1" style="color: #869d7a;">+ Thêm lỗi mới</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SPEAKING LOG -->
-            <div id="speaking-log" class="log-content hidden">
-                <div class="glass-card overflow-hidden">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50/50">
-                            <tr>
-                                <th class="p-4 text-left">Vấn đề</th>
-                                <th class="p-4 text-left">Biểu hiện / Ví dụ</th>
-                                <th class="p-4 text-left">Cách khắc phục</th>
-                            </tr>
-                        </thead>
-                        <tbody id="speaking-tbody" class="divide-y divide-sand/20">
-                            <tr>
-                                <td class="p-4 font-semibold">Filler words</td>
-                                <td class="p-4 text-red-500/80 italic">Dùng "Um", "Ah" quá nhiều khi bí ý</td>
-                                <td class="p-4 text-sage font-medium">Dừng lại 1-2 giây thay vì phát âm "Um"</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="p-4 bg-sage/5 cursor-pointer hover:bg-sage/10 transition-colors" onclick="openAddErrorModal('speaking')">
-                        <button class="text-xs font-bold uppercase text-sage flex items-center gap-1" style="color: #869d7a;">+ Thêm lỗi mới</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- READING LOG -->
-            <div id="reading-log" class="log-content hidden">
-                <div class="glass-card overflow-hidden">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50/50">
-                            <tr>
-                                <th class="p-4 text-left">Dạng câu hỏi</th>
-                                <th class="p-4 text-left">Lỗi thường gặp</th>
-                                <th class="p-4 text-left">Chiến lược sửa</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reading-tbody" class="divide-y divide-sand/20">
-                            <tr>
-                                <td class="p-4 font-semibold">T/F/NG</td>
-                                <td class="p-4 text-red-500/80 italic">Nhầm lẫn giữa False và Not Given</td>
-                                <td class="p-4 text-sage font-medium">False là có thông tin ngược lại. NG là không đề cập.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="p-4 bg-sage/5 cursor-pointer hover:bg-sage/10 transition-colors" onclick="openAddErrorModal('reading')">
-                        <button class="text-xs font-bold uppercase text-sage flex items-center gap-1" style="color: #869d7a;">+ Thêm lỗi mới</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- LISTENING LOG -->
-            <div id="listening-log" class="log-content hidden">
-                <div class="glass-card overflow-hidden">
-                    <table class="w-full text-sm">
-                        <thead class="bg-gray-50/50">
-                            <tr>
-                                <th class="p-4 text-left">Vấn đề</th>
-                                <th class="p-4 text-left">Ví dụ thực tế</th>
-                                <th class="p-4 text-left">Ghi chú khắc phục</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listening-tbody" class="divide-y divide-sand/20">
-                            <tr>
-                                <td class="p-4 font-semibold">Spelling</td>
-                                <td class="p-4 text-red-500/80 italic">Viết sai "accommodation" thành "acomodation"</td>
-                                <td class="p-4 text-sage font-medium">Ghi chép lại vào sổ tay, double check số lượng chữ m, c</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="p-4 bg-sage/5 cursor-pointer hover:bg-sage/10 transition-colors" onclick="openAddErrorModal('listening')">
-                        <button class="text-xs font-bold uppercase text-sage flex items-center gap-1" style="color: #869d7a;">+ Thêm lỗi mới</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: VOCABULARY -->
-        <section id="vocab-section" class="tab-content hidden">
-            <h2 class="text-2xl font-bold mb-2">Kho từ vựng (Vocabulary Bank)</h2>
-            <p class="text-sm text-gray-500 mb-6">Tập trung học theo chủ đề để tăng điểm Lexical Resource.</p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="vocab-grid">
-                <div class="glass-card p-6">
-                    <h3 class="font-bold text-clay mb-3 flex justify-between items-center" style="color: #d4a373;">
-                        Education <span>🎓</span>
-                    </h3>
-                    <ul class="text-sm space-y-2 text-gray-600">
-                        <li>• Academic performance</li>
-                        <li>• Vocational training</li>
-                        <li>• Curriculum reform</li>
-                        <li>• To pursue higher education</li>
-                    </ul>
-                </div>
-                <div class="glass-card p-6">
-                    <h3 class="font-bold text-clay mb-3 flex justify-between items-center" style="color: #d4a373;">
-                        Technology <span>💻</span>
-                    </h3>
-                    <ul class="text-sm space-y-2 text-gray-600">
-                        <li>• Cutting-edge technology</li>
-                        <li>• Digital literacy</li>
-                        <li>• To revolutionize</li>
-                        <li>• Technological breakthrough</li>
-                    </ul>
-                </div>
-                <!-- Nút thêm chủ đề nằm cuối lưới -->
-                <div onclick="openAddVocabModal()" class="glass-card p-6 border-dashed border-2 border-sand flex items-center justify-center cursor-pointer hover:bg-black/5 transition-colors">
-                    <button class="text-sm font-bold text-gray-400">+ Thêm chủ đề mới</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Add Error Modal -->
-        <div id="add-error-modal" class="fixed inset-0 bg-black/30 z-[100] hidden flex items-center justify-center backdrop-blur-sm">
-            <div class="glass-card w-11/12 max-w-md p-6 relative shadow-2xl bg-[#fdfbf7]">
-                <h3 class="text-lg font-bold mb-4 text-sage" id="add-error-title" style="color: #869d7a;">Thêm lỗi mới</h3>
-                <input type="hidden" id="error-skill-type">
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Loại lỗi / Vấn đề</label>
-                        <input type="text" id="error-col1" class="w-full p-2 border border-sand bg-transparent rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sage" placeholder="VD: Grammar, Từ vựng...">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Ví dụ sai / Chi tiết</label>
-                        <textarea id="error-col2" class="w-full p-2 border border-sand bg-transparent rounded-lg text-sm h-16 focus:outline-none focus:ring-1 focus:ring-sage" placeholder="Nhập chi tiết lỗi sai..."></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Cách sửa / Ghi chú</label>
-                        <textarea id="error-col3" class="w-full p-2 border border-sand bg-transparent rounded-lg text-sm h-16 focus:outline-none focus:ring-1 focus:ring-sage" placeholder="Nhập cách sửa đúng..."></textarea>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex justify-end gap-3">
-                    <button onclick="closeAddErrorModal()" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 transition-colors">Hủy</button>
-                    <button onclick="saveNewError()" class="px-4 py-2 rounded-lg text-sm font-bold text-white shadow-md hover:opacity-90 transition-opacity" style="background-color: #869d7a;">Lưu lại</button>
-                </div>
+            <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <button onclick="closeMockScoresModal()" class="px-4 py-2 rounded-lg text-xs font-medium text-slate-500 hover:bg-gray-100 transition-colors">Hủy</button>
+                <button onclick="saveMockScores()" class="px-5 py-2 text-xs font-bold text-white rounded-lg hover:opacity-95 shadow-md bg-[#869d7a]">Cập nhật biểu đồ</button>
             </div>
         </div>
+    </div>
 
-        <!-- Add Vocab Modal -->
-        <div id="add-vocab-modal" class="fixed inset-0 bg-black/30 z-[100] hidden flex items-center justify-center backdrop-blur-sm">
-            <div class="glass-card w-11/12 max-w-md p-6 relative shadow-2xl bg-[#fdfbf7]">
-                <h3 class="text-lg font-bold mb-4 text-sage" style="color: #869d7a;">Thêm chủ đề từ vựng</h3>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Tên chủ đề</label>
-                        <input type="text" id="vocab-topic-name" class="w-full p-2 border border-sand bg-transparent rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sage" placeholder="VD: Environment">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Biểu tượng (Emoji)</label>
-                        <input type="text" id="vocab-topic-icon" class="w-full p-2 border border-sand bg-transparent rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-sage" placeholder="VD: 🌍">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Từ vựng (mỗi từ 1 dòng)</label>
-                        <textarea id="vocab-words" class="w-full p-2 border border-sand bg-transparent rounded-lg text-sm h-24 focus:outline-none focus:ring-1 focus:ring-sage" placeholder="climate change&#10;global warming&#10;eco-friendly..."></textarea>
-                    </div>
-                </div>
+    <!-- MODAL 2: Monthly Task Checklists -->
+    <div id="month-checkpoint-modal" class="fixed inset-0 bg-black/45 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="glass-card w-full max-w-lg p-6 relative shadow-2xl bg-[#fdfbf7] flex flex-col max-h-[85vh]">
+            <button onclick="closeMonthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="mb-4">
+                <span id="month-modal-tag" class="text-xs font-bold uppercase text-[#869d7a]">Tháng 1</span>
+                <h3 id="month-modal-title" class="text-base font-bold text-slate-800">Build nền + fix Grammar</h3>
+                <p class="text-xs text-slate-400 mt-1">Hoàn thành các mốc nhiệm vụ cốt lõi sau để đạt mục tiêu tháng này.</p>
+            </div>
 
-                <div class="mt-6 flex justify-end gap-3">
-                    <button onclick="closeAddVocabModal()" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 transition-colors">Hủy</button>
-                    <button onclick="saveNewVocab()" class="px-4 py-2 rounded-lg text-sm font-bold text-white shadow-md hover:opacity-90 transition-opacity" style="background-color: #869d7a;">Tạo chủ đề</button>
-                </div>
+            <!-- Task List Container -->
+            <div class="overflow-y-auto space-y-3 py-2 flex-1" id="month-tasks-container">
+                <!-- Dynamically populated checkboxes -->
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-500">Hoàn tất mốc này: <span id="month-completion-pct" class="text-[#869d7a]">0%</span></span>
+                <button onclick="closeMonthModal()" class="px-5 py-2 text-xs font-bold text-white rounded-lg hover:opacity-95 shadow bg-[#869d7a]">Đóng & Lưu</button>
             </div>
         </div>
+    </div>
 
-        <!-- AI Modal Popup -->
-        <div id="ai-modal" class="fixed inset-0 bg-black/30 z-[100] hidden flex items-center justify-center backdrop-blur-sm">
-            <div class="glass-card w-11/12 max-w-lg p-6 relative shadow-2xl bg-[#fdfbf7]">
-                <button onclick="closeAI()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-                <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-sage" style="color: #869d7a;">✨ Lời khuyên từ AI Tutor</h3>
-                <div id="ai-content" class="text-sm text-gray-700 max-h-96 overflow-y-auto whitespace-pre-wrap leading-relaxed">
-                    <!-- AI response will be injected here -->
+    <!-- MODAL 3: Adding New Custom Errors -->
+    <div id="add-error-modal" class="fixed inset-0 bg-black/45 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="glass-card w-full max-w-md p-6 relative shadow-2xl bg-[#fdfbf7]">
+            <button onclick="closeAddErrorModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="text-base font-bold text-slate-800 mb-4">Ghi nhận lỗi sai mới</h3>
+            <form id="add-error-form" onsubmit="submitNewError(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Kỹ năng</label>
+                    <select id="err-input-skill" class="w-full text-xs p-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a]">
+                        <option value="writing">Writing</option>
+                        <option value="speaking">Speaking</option>
+                        <option value="reading">Reading</option>
+                        <option value="listening">Listening</option>
+                    </select>
                 </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Loại lỗi / Vấn đề</label>
+                    <input type="text" id="err-input-type" required placeholder="Ví dụ: Lỗi chia thì, Từ vựng lặp..." class="w-full text-xs p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mẫu lỗi đã phạm</label>
+                    <textarea id="err-input-mistake" rows="2" required placeholder="Ví dụ: 'Although they tried hard, but they failed.'" class="w-full text-xs p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a]"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Phiên bản sửa đúng</label>
+                    <textarea id="err-input-correction" rows="2" required placeholder="Ví dụ: 'Although they tried hard, they failed.'" class="w-full text-xs p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a]"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAddErrorModal()" class="px-4 py-2 text-xs text-slate-500 hover:bg-gray-100 rounded-lg">Bỏ qua</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-[#869d7a] hover:bg-[#728867] rounded-lg shadow-sm">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Adding New Custom Vocabulary Topic -->
+    <div id="add-topic-modal" class="fixed inset-0 bg-black/45 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="glass-card w-full max-w-md p-6 relative shadow-2xl bg-[#fdfbf7]">
+            <button onclick="closeAddTopicModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="text-base font-bold text-slate-800 mb-4">Tạo chủ đề từ vựng mới</h3>
+            <form id="add-topic-form" onsubmit="submitNewTopic(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Tên chủ đề</label>
+                    <input type="text" id="topic-input-title" required placeholder="Ví dụ: Tourism, Science..." class="w-full text-xs p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Emoji / Biểu tượng</label>
+                    <input type="text" id="topic-input-emoji" required placeholder="Ví dụ: ✈️, 🔬..." class="w-full text-xs p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Từ vựng & Mẫu Collocations (Mỗi từ 1 dòng, định dạng: Từ vựng | Ý nghĩa)</label>
+                    <textarea id="topic-input-words" rows="5" required placeholder="Ví dụ: sustainable tourism | du lịch bền vững&#10;globally renowned | nổi tiếng toàn cầu" class="w-full text-xs p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:ring-[#869d7a] font-mono"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAddTopicModal()" class="px-4 py-2 text-xs text-slate-500 hover:bg-gray-100 rounded-lg">Bỏ qua</button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-[#869d7a] hover:bg-[#728867] rounded-lg shadow-sm">Thêm chủ đề</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: AI Tutor Strategic Guidance Popups -->
+    <div id="ai-modal" class="fixed inset-0 bg-black/45 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="glass-card w-full max-w-lg p-6 relative shadow-2xl bg-[#fdfbf7] flex flex-col max-h-[85vh]">
+            <button onclick="closeAI()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+                <span class="text-lg">✨</span> Lời khuyên từ AI Tutor (Gemini-3)
+            </h3>
+            <div id="ai-content" class="text-xs text-slate-600 leading-relaxed overflow-y-auto pr-1 flex-1 space-y-3 py-2 scrollbar-hide">
+                <!-- AI dynamic structured recommendations will print here -->
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+                <button onclick="closeAI()" class="px-5 py-2 text-xs font-bold text-white bg-slate-800 hover:bg-slate-700 rounded-lg shadow-sm">Đã hiểu</button>
             </div>
         </div>
+    </div>
 
-    </main>
-
-    <footer class="mt-20 border-t border-sand/30 py-8 text-center text-gray-400 text-xs">
-        <p>IELTS Study Tracking Canvas - Thiết kế cho lộ trình 8 tháng Band 7.0</p>
-        <p class="mt-2">"Small steps everyday lead to big results."</p>
-    </footer>
-
+    <!-- ================= JAVASCRIPT SYSTEM ================= -->
     <script>
-        // Tab Navigation Logic
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-                tab.classList.remove('block');
-            });
-            document.getElementById(tabId + '-section').classList.remove('hidden');
-            document.getElementById(tabId + '-section').classList.add('block');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+        // Global variables for tab, week, category control
+        let currentTab = 'dashboard';
+        let activeTrackerWeek = 1;
+        let activeErrorCategory = 'writing';
+
+        // Monthly checklist content for all 8 months
+        const MONTHLY_TARGETS = {
+            1: {
+                label: "Tháng 1",
+                time: "Tháng 5 - 6",
+                title: "Build nền & Fix Grammar",
+                tasks: [
+                    "Hệ thống hóa lại 12 thì cơ bản và cấu trúc câu ghép/phức",
+                    "Trau dồi 500 từ vựng nền tảng thường gặp trong IELTS",
+                    "Luyện nghe chính tả các hội thoại ngắn hàng ngày",
+                    "Tập viết câu đúng ngữ pháp, tránh lỗi run-on sentences"
+                ]
+            },
+            2: {
+                label: "Tháng 2",
+                time: "Tháng 7",
+                title: "Định hướng Format đề thi",
+                tasks: [
+                    "Làm quen chi tiết cấu trúc 40 câu của Listening & Reading",
+                    "Tìm hiểu cách triển khai đoạn văn Task 1 và Task 2",
+                    "Luyện tập phát âm chuẩn IPA và trả lời Part 1 tự nhiên",
+                    "Giải 3 bộ đề cơ bản để định hình năng lực hiện tại"
+                ]
+            },
+            3: {
+                label: "Tháng 3",
+                time: "Tháng 8",
+                title: "Rèn luyện chuyên sâu L/R",
+                tasks: [
+                    "Áp dụng phương pháp Skimming & Scanning trong Reading",
+                    "Tập trung nâng cao dạng MCQ và Matching Headings",
+                    "Tập trung kỹ thuật dự đoán từ loại trong Listening",
+                    "Làm đề test đơn lẻ cho Listening và Reading mỗi tuần"
+                ]
+            },
+            4: {
+                label: "Tháng 4",
+                time: "Tháng 9",
+                title: "Nâng band điểm Speaking/Writing",
+                tasks: [
+                    "Xây dựng ngân hàng ý tưởng cho 15 chủ đề Speaking Part 2",
+                    "Thực hành viết các bài luận Task 2 có đủ 4 tiêu chí chấm",
+                    "Sử dụng các từ nối hiệu quả để tăng tính mạch lạc (Cohesion)",
+                    "Luyện tập kiểm soát thời gian làm bài Writing trong 60 phút"
+                ]
+            },
+            5: {
+                label: "Tháng 5",
+                time: "Tháng 10",
+                title: "Củng cố & Đạt mốc Mock 6.5",
+                tasks: [
+                    "Thực hiện bài test Mock đầy đủ dưới áp lực phòng thi",
+                    "Phân tích chuyên sâu nhật ký lỗi sai để tránh lặp lại lỗi cũ",
+                    "Học cách mở rộng câu trả lời Speaking Part 3 sâu sắc hơn",
+                    "Chữa chi tiết ít nhất 10 đề Writing Task 1 nâng cao"
+                ]
+            },
+            6: {
+                label: "Tháng 6",
+                time: "Tháng 11",
+                title: "Luyện đề phối hợp",
+                tasks: [
+                    "Tăng tốc độ đọc hiểu để hoàn thành Reading trước 5 phút",
+                    "Nâng cấp kho từ vựng Academic và Idiomatic cho Speaking",
+                    "Giải tối thiểu 2 đề thi thật Cambridge mỗi tuần",
+                    "Thực hành ghi âm bài nói Speaking tự đánh giá lỗi phát âm"
+                ]
+            },
+            7: {
+                label: "Tháng 7",
+                time: "Tháng 12",
+                title: "Tối ưu hóa chiến thuật làm bài",
+                tasks: [
+                    "Tối ưu hóa kỹ thuật loại trừ phương án sai trong Reading",
+                    "Xây dựng bộ từ vựng tủ/Collocations đắt giá cho Writing",
+                    "Mô phỏng 5 buổi thi nói trực tiếp với giáo viên/bạn học",
+                    "Khắc phục triệt để các lỗi chính tả ngớ ngẩn khi nghe"
+                ]
+            },
+            8: {
+                label: "Tháng 8",
+                time: "Tháng 1",
+                title: "Mô phỏng toàn diện & Sẵn sàng",
+                tasks: [
+                    "Thi thử liên tục cả 4 kỹ năng trong một buổi học",
+                    "Review lại toàn bộ Nhật ký lỗi sai và Kho từ vựng",
+                    "Tập trung tinh thần thoải mái, ngủ đủ giấc, ăn uống điều độ",
+                    "Bấm giờ viết nháp nhanh Outline bài Writing trong 5 phút"
+                ]
+            }
+        };
+
+        // Standard Default scores arrays (Listening, Reading, Writing, Speaking)
+        const DEFAULT_MOCK_SCORES = {
+            1: { list: 6.0, read: 6.5, write: 5.5, speak: 5.5 },
+            2: { list: 6.5, read: 6.5, write: 6.0, speak: 5.5 },
+            3: { list: 6.5, read: 7.0, write: 6.0, speak: 6.0 },
+            4: { list: 7.0, read: 7.0, write: 6.5, speak: 6.5 },
+            5: { list: 7.0, read: 7.5, write: 6.5, speak: 6.5 },
+            6: { list: 7.5, read: 7.5, write: 6.5, speak: 7.0 },
+            7: { list: 7.5, read: 8.0, write: 7.0, speak: 7.0 },
+            8: { list: 8.0, read: 8.0, write: 7.0, speak: 7.0 }
+        };
+
+        // Error Logs Default Data
+        const DEFAULT_ERROR_LOGS = {
+            writing: [
+                { id: 1, type: "Lỗi chia động từ số ít/nhiều", mistake: "The number of student who fail the test are increasing.", correction: "The number of students who fail the test is increasing." },
+                { id: 2, type: "Sử dụng từ nối sai ngữ cảnh", mistake: "He failed the exam. On the contrary, he studied hard.", correction: "He failed the exam. However, he studied hard. (Hoặc Although he studied hard, he failed...)" }
+            ],
+            speaking: [
+                { id: 3, type: "Lỗi âm đuôi s/es khi nói nhanh", mistake: "She play piano very well. (Bị mất âm s)", correction: "She plays /pleɪz/ the piano very well." }
+            ],
+            reading: [
+                { id: 4, type: "Bẫy từ đồng nghĩa (Synonym trap)", mistake: "Chọn TRUE vì thấy từ khóa trùng lặp 100% so với câu hỏi.", correction: "Đọc kỹ toàn bộ câu văn, chú ý các từ hạn định (all, mostly, only) và đối chiếu ý chính thay vì từ khóa bề nổi." }
+            ],
+            listening: [
+                { id: 5, type: "Viết sai chính tả từ quen thuộc", mistake: "Tommorow, Accommodation (thiếu chữ 'm')", correction: "Tomorrow, Accommodation." }
+            ]
+        };
+
+        // Vocab Bank Default Data
+        const DEFAULT_VOCAB_TOPICS = [
+            {
+                id: 1,
+                emoji: "🎓",
+                title: "Education",
+                words: [
+                    { word: "Academic performance", meaning: "Kết quả học tập, thành tích học thuật" },
+                    { word: "Hands-on experience", meaning: "Kinh nghiệm thực tiễn quý báu" },
+                    { word: "Curriculum reform", meaning: "Cải cách, làm mới chương trình học" }
+                ]
+            },
+            {
+                id: 2,
+                emoji: "📱",
+                title: "Technology",
+                words: [
+                    { word: "Technological breakthrough", meaning: "Bước đột phá mang tính công nghệ" },
+                    { word: "Obsolete", meaning: "Bị lỗi thời, không còn giá trị sử dụng" },
+                    { word: "Cyber security", meaning: "An ninh mạng xã hội" }
+                ]
+            },
+            {
+                id: 3,
+                emoji: "🌱",
+                title: "Environment",
+                words: [
+                    { word: "Carbon footprint", meaning: "Lượng khí thải carbon của cá nhân/tổ chức" },
+                    { word: "Biodiversity conservation", meaning: "Bảo tồn tính đa dạng sinh học" },
+                    { word: "Eco-friendly", meaning: "Thân thiện, hòa hợp với môi trường" }
+                ]
+            }
+        ];
+
+        let mockTestChartInstance = null;
+
+        // IELTS overall rounding rules helper function
+        function calculateIeltsOverall(l, r, w, s) {
+            const avg = (parseFloat(l) + parseFloat(r) + parseFloat(w) + parseFloat(s)) / 4;
+            const decimal = avg - Math.floor(avg);
+            if (decimal < 0.25) return Math.floor(avg);
+            else if (decimal < 0.75) return Math.floor(avg) + 0.5;
+            else return Math.ceil(avg);
         }
 
-        // Error Log Tab Navigation
-        function switchLog(logId) {
-            // Update Tab Button Styles
-            document.querySelectorAll('.log-tab-btn').forEach(btn => {
-                btn.classList.remove('active', 'border-b-2', 'border-sage');
-                btn.classList.add('text-gray-400');
-                btn.style.borderBottomColor = 'transparent';
-            });
-            event.currentTarget.classList.add('active', 'border-b-2', 'border-sage');
-            event.currentTarget.classList.remove('text-gray-400');
-            event.currentTarget.style.borderBottomColor = '#869d7a';
-
-            // Show/Hide corresponding Log Tables
-            document.querySelectorAll('.log-content').forEach(content => {
-                content.classList.add('hidden');
-                content.classList.remove('block');
-            });
-            const targetLog = document.getElementById(logId + '-log');
-            if(targetLog) {
-                targetLog.classList.remove('hidden');
-                targetLog.classList.add('block');
+        // Initialize LocalStorage elements if they do not exist
+        function initializeDatabase() {
+            if (!localStorage.getItem('ielts_mock_scores')) {
+                localStorage.setItem('ielts_mock_scores', JSON.stringify(DEFAULT_MOCK_SCORES));
+            }
+            if (!localStorage.getItem('ielts_monthly_progress')) {
+                const initialProgress = {};
+                for (let i = 1; i <= 8; i++) {
+                    initialProgress[i] = [false, false, false, false]; // Default 4 tasks unchecked
+                }
+                localStorage.setItem('ielts_monthly_progress', JSON.stringify(initialProgress));
+            }
+            if (!localStorage.getItem('ielts_error_logs')) {
+                localStorage.setItem('ielts_error_logs', JSON.stringify(DEFAULT_ERROR_LOGS));
+            }
+            if (!localStorage.getItem('ielts_vocab_topics')) {
+                localStorage.setItem('ielts_vocab_topics', JSON.stringify(DEFAULT_VOCAB_TOPICS));
             }
         }
 
-        // --- NEW LOGIC: Add Error Modals ---
-        function openAddErrorModal(skill) {
-            document.getElementById('error-skill-type').value = skill;
-            const titleMap = {
-                'writing': 'Thêm lỗi mới (Writing)',
-                'speaking': 'Thêm lỗi mới (Speaking)',
-                'reading': 'Thêm lỗi mới (Reading)',
-                'listening': 'Thêm lỗi mới (Listening)'
-            };
-            document.getElementById('add-error-title').innerText = titleMap[skill];
-            
-            // Clear inputs
-            document.getElementById('error-col1').value = '';
-            document.getElementById('error-col2').value = '';
-            document.getElementById('error-col3').value = '';
+        // Tab Switching Mechanism
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
+            // Toggle active styles on menu buttons
+            document.querySelectorAll('header nav button').forEach(btn => {
+                btn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all text-gray-500 hover:text-slate-700";
+            });
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all text-slate-700 bg-white shadow-sm";
+            }
+
+            if (tabId === 'dashboard') {
+                setTimeout(() => {
+                    if (mockTestChartInstance) mockTestChartInstance.resize();
+                }, 100);
+            }
+        }
+
+        // Initialize Core analytical chart on reload
+        function renderMockChart() {
+            const scores = JSON.parse(localStorage.getItem('ielts_mock_scores')) || DEFAULT_MOCK_SCORES;
+            
+            const labels = [];
+            const listData = [];
+            const readData = [];
+            const writeData = [];
+            const speakData = [];
+            const overallData = [];
+            const targetData = [];
+
+            for (let m = 1; m <= 8; m++) {
+                labels.push(`${MONTHLY_TARGETS[m].label}\n(${MONTHLY_TARGETS[m].time})`);
+                const s = scores[m] || { list: 5.0, read: 5.0, write: 5.0, speak: 5.0 };
+                listData.push(s.list);
+                readData.push(s.read);
+                writeData.push(s.write);
+                speakData.push(s.speak);
+                
+                const overallVal = calculateIeltsOverall(s.list, s.read, s.write, s.speak);
+                overallData.push(overallVal);
+                
+                // Target bands matching months progression
+                if (m === 1) targetData.push(6.0);
+                else if (m >= 2 && m <= 5) targetData.push(6.5);
+                else targetData.push(7.0);
+            }
+
+            const ctx = document.getElementById('mockTestChart').getContext('2d');
+            if (mockTestChartInstance) {
+                mockTestChartInstance.destroy();
+            }
+
+            mockTestChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Listening', data: listData, borderColor: '#869d7a', backgroundColor: 'transparent', tension: 0.3, pointRadius: 4 },
+                        { label: 'Reading', data: readData, borderColor: '#d4a373', backgroundColor: 'transparent', tension: 0.3, pointRadius: 4 },
+                        { label: 'Writing', data: writeData, borderColor: '#64748b', backgroundColor: 'transparent', tension: 0.3, pointRadius: 4 },
+                        { label: 'Speaking', data: speakData, borderColor: '#cb8b8b', backgroundColor: 'transparent', tension: 0.3, pointRadius: 4 },
+                        { label: 'Overall Thực tế', data: overallData, borderColor: '#1e293b', borderDash: [], backgroundColor: 'rgba(30, 41, 59, 0.05)', tension: 0.2, pointRadius: 5, fill: true, borderWidth: 2.5 },
+                        { label: 'Mục tiêu Band 7.0', data: targetData, borderColor: '#94a3b8', borderDash: [6, 4], backgroundColor: 'transparent', tension: 0, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+                    },
+                    scales: {
+                        y: { min: 4.5, max: 9.0, ticks: { stepSize: 0.5 } }
+                    }
+                }
+            });
+        }
+
+        // Open/Close Mock scores dialog
+        function openMockScoresModal() {
+            const scores = JSON.parse(localStorage.getItem('ielts_mock_scores')) || DEFAULT_MOCK_SCORES;
+            const tbody = document.getElementById('mock-scores-tbody');
+            tbody.innerHTML = '';
+
+            const bandOptions = [0, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0];
+
+            for (let m = 1; m <= 8; m++) {
+                const s = scores[m] || { list: 5.0, read: 5.0, write: 5.0, speak: 5.0 };
+                const overallVal = calculateIeltsOverall(s.list, s.read, s.write, s.speak);
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors';
+
+                let rowHtml = `<td class="py-2.5 font-semibold text-slate-700 text-xs">${MONTHLY_TARGETS[m].label} (${MONTHLY_TARGETS[m].time})</td>`;
+
+                ['list', 'read', 'write', 'speak'].forEach(skill => {
+                    const skillVal = s[skill];
+                    let select = `<td class="py-1 text-center">
+                        <select id="mock_${m}_${skill}" onchange="updateModalRowOverall(${m})" class="bg-white border border-gray-200 rounded p-1 text-xs focus:ring-1 focus:ring-[#869d7a] w-14 text-center">`;
+                    bandOptions.forEach(opt => {
+                        const isSelected = (opt === parseFloat(skillVal)) ? 'selected' : '';
+                        select += `<option value="${opt}" ${isSelected}>${opt.toFixed(1)}</option>`;
+                    });
+                    select += `</select></td>`;
+                    rowHtml += select;
+                });
+
+                rowHtml += `<td class="py-1 text-center font-bold text-slate-800 text-sm" id="mock_overall_${m}">${overallVal.toFixed(1)}</td>`;
+                tr.innerHTML = rowHtml;
+                tbody.appendChild(tr);
+            }
+
+            document.getElementById('mock-scores-modal').classList.remove('hidden');
+        }
+
+        function updateModalRowOverall(m) {
+            const l = document.getElementById(`mock_${m}_list`).value;
+            const r = document.getElementById(`mock_${m}_read`).value;
+            const w = document.getElementById(`mock_${m}_write`).value;
+            const s = document.getElementById(`mock_${m}_speak`).value;
+            const overall = calculateIeltsOverall(l, r, w, s);
+            document.getElementById(`mock_overall_${m}`).innerText = overall.toFixed(1);
+        }
+
+        function closeMockScoresModal() {
+            document.getElementById('mock-scores-modal').classList.add('hidden');
+        }
+
+        function saveMockScores() {
+            const scores = {};
+            for (let m = 1; m <= 8; m++) {
+                scores[m] = {
+                    list: parseFloat(document.getElementById(`mock_${m}_list`).value),
+                    read: parseFloat(document.getElementById(`mock_${m}_read`).value),
+                    write: parseFloat(document.getElementById(`mock_${m}_write`).value),
+                    speak: parseFloat(document.getElementById(`mock_${m}_speak`).value)
+                };
+            }
+            localStorage.setItem('ielts_mock_scores', JSON.stringify(scores));
+            closeMockScoresModal();
+            renderMockChart();
+        }
+
+        // Render Monthly Checkpoints in Grid view on Dashboard
+        function renderMonthlyCheckpointsGrid() {
+            const container = document.getElementById('monthly-checkpoints-grid');
+            container.innerHTML = '';
+
+            const progressData = JSON.parse(localStorage.getItem('ielts_monthly_progress'));
+
+            for (let m = 1; m <= 8; m++) {
+                const month = MONTHLY_TARGETS[m];
+                const checkedArr = progressData[m] || [false, false, false, false];
+                const completedCount = checkedArr.filter(x => x).length;
+                const completionPct = Math.round((completedCount / checkedArr.length) * 100);
+
+                const cardHtml = `
+                    <div class="glass-card p-5 relative overflow-hidden group month-card" onclick="openMonthModal(${m})">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="text-[10px] font-bold text-[#869d7a] uppercase tracking-wider block">${month.label} (${month.time})</span>
+                                <h3 class="text-xs font-bold text-slate-800 line-clamp-1 group-hover:text-[#869d7a] transition-colors mt-0.5">${month.title}</h3>
+                            </div>
+                            <button onclick="event.stopPropagation(); triggerAIEngine(${m})" class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity bg-[#869d7a]/10 hover:bg-[#869d7a]/20 text-[#869d7a] p-1.5 rounded-lg text-xs" title="Hỏi AI">
+                                ✨ AI
+                            </button>
+                        </div>
+                        <div class="space-y-1.5 mb-4">
+                            ${month.tasks.map((task, i) => `
+                                <div class="flex items-start gap-1.5 text-[11px] text-slate-500">
+                                    <span class="text-[10px] mt-0.5">${checkedArr[i] ? '✅' : '👉'}</span>
+                                    <span class="line-clamp-1 ${checkedArr[i] ? 'line-through opacity-60' : ''}">${task}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="pt-3 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                            <span class="text-slate-400 font-medium">Tiến độ:</span>
+                            <span class="font-bold text-slate-700">${completionPct}%</span>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-100">
+                            <div class="h-full bg-[#869d7a] transition-all duration-300" style="width: ${completionPct}%"></div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            }
+
+            calculateAndUpdateOverallProgress();
+        }
+
+        // Calculate overarching 8-month KPI progress value
+        function calculateAndUpdateOverallProgress() {
+            const progressData = JSON.parse(localStorage.getItem('ielts_monthly_progress'));
+            let totalTasks = 0;
+            let totalCompleted = 0;
+
+            for (let m = 1; m <= 8; m++) {
+                const arr = progressData[m] || [false, false, false, false];
+                totalTasks += arr.length;
+                totalCompleted += arr.filter(x => x).length;
+            }
+
+            const overallPct = Math.round((totalCompleted / totalTasks) * 100);
+            
+            document.getElementById('overall-progress-text').innerText = `${overallPct}%`;
+            document.getElementById('overall-progress-bar').style.width = `${overallPct}%`;
+        }
+
+        let currentActiveModalMonth = 1;
+
+        // Open Modal to tick monthly checklist details
+        function openMonthModal(monthNum) {
+            currentActiveModalMonth = monthNum;
+            const month = MONTHLY_TARGETS[monthNum];
+            const progressData = JSON.parse(localStorage.getItem('ielts_monthly_progress'));
+            const checkedArr = progressData[monthNum] || [false, false, false, false];
+
+            document.getElementById('month-modal-tag').innerText = `${month.label} (${month.time})`;
+            document.getElementById('month-modal-title').innerText = month.title;
+
+            const container = document.getElementById('month-tasks-container');
+            container.innerHTML = '';
+
+            month.tasks.forEach((task, index) => {
+                const isChecked = checkedArr[index] ? 'checked' : '';
+                container.innerHTML += `
+                    <label class="flex items-start gap-3 p-3 rounded-xl border border-gray-100 hover:bg-slate-50 transition-colors cursor-pointer text-xs">
+                        <input type="checkbox" onchange="toggleMonthTask(${monthNum}, ${index}, this.checked)" ${isChecked} class="mt-0.5 h-4 w-4 rounded border-gray-300 text-[#869d7a] focus:ring-[#869d7a]">
+                        <span class="text-slate-600 leading-relaxed">${task}</span>
+                    </label>
+                `;
+            });
+
+            updateMonthModalPct();
+            document.getElementById('month-checkpoint-modal').classList.remove('hidden');
+        }
+
+        function toggleMonthTask(monthNum, index, checked) {
+            const progressData = JSON.parse(localStorage.getItem('ielts_monthly_progress'));
+            if (!progressData[monthNum]) {
+                progressData[monthNum] = [false, false, false, false];
+            }
+            progressData[monthNum][index] = checked;
+            localStorage.setItem('ielts_monthly_progress', JSON.stringify(progressData));
+
+            updateMonthModalPct();
+            renderMonthlyCheckpointsGrid();
+        }
+
+        function updateMonthModalPct() {
+            const progressData = JSON.parse(localStorage.getItem('ielts_monthly_progress'));
+            const checkedArr = progressData[currentActiveModalMonth] || [false, false, false, false];
+            const completed = checkedArr.filter(x => x).length;
+            const pct = Math.round((completed / checkedArr.length) * 100);
+
+            document.getElementById('month-completion-pct').innerText = `${pct}%`;
+        }
+
+        function closeMonthModal() {
+            document.getElementById('month-checkpoint-modal').classList.add('hidden');
+        }
+
+        // Tracker Logic (Tabs weeks switching)
+        function switchWeek(weekNum) {
+            activeTrackerWeek = weekNum;
+
+            // Update buttons styling
+            for (let w = 1; w <= 4; w++) {
+                const btn = document.getElementById(`week-btn-${w}`);
+                if (btn) {
+                    if (w === weekNum) {
+                        btn.className = "px-3 py-1.5 text-xs font-bold rounded-md transition-all bg-white text-slate-800 shadow-sm";
+                    } else {
+                        btn.className = "px-3 py-1.5 text-xs font-bold rounded-md transition-all text-slate-500 hover:text-slate-800";
+                    }
+                }
+            }
+
+            document.querySelectorAll('.current-week-lbl').forEach(el => el.innerText = weekNum);
+
+            // Fetch or configure local state keys
+            const keyChecklist = `ielts_week_${weekNum}_checklist`;
+            const keySliders = `ielts_week_${weekNum}_perf`;
+            const keyNotes = `ielts_week_${weekNum}_notes`;
+
+            if (!localStorage.getItem(keyChecklist)) {
+                // Initialize clean matrix (7 days x 8 tasks)
+                const freshMatrix = {};
+                ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].forEach(day => {
+                    freshMatrix[day] = [false, false, false, false, false, false, false, false];
+                });
+                localStorage.setItem(keyChecklist, JSON.stringify(freshMatrix));
+            }
+
+            if (!localStorage.getItem(keySliders)) {
+                localStorage.setItem(keySliders, JSON.stringify({ consistency: 7, focus: 7 }));
+            }
+
+            if (!localStorage.getItem(keyNotes)) {
+                localStorage.setItem(keyNotes, JSON.stringify({ weakness: "", mistakes: "" }));
+            }
+
+            // Draw contents inside grid table
+            renderTrackerTable();
+
+            // Populate notes inputs & performance scores
+            const perf = JSON.parse(localStorage.getItem(keySliders));
+            const notes = JSON.parse(localStorage.getItem(keyNotes));
+
+            document.getElementById('slider-consistency').value = perf.consistency;
+            document.getElementById('slider-focus').value = perf.focus;
+            updatePerformanceIndicators();
+
+            document.getElementById('notes-weakness').value = notes.weakness || "";
+            document.getElementById('notes-mistakes').value = notes.mistakes || "";
+        }
+
+        function renderTrackerTable() {
+            const weekNum = activeTrackerWeek;
+            const matrix = JSON.parse(localStorage.getItem(`ielts_week_${weekNum}_checklist`));
+            const tbody = document.getElementById('tracker-tbody');
+            tbody.innerHTML = '';
+
+            const VietnameseDays = {
+                mon: "Thứ Hai",
+                tue: "Thứ Ba",
+                wed: "Thứ Tư",
+                thu: "Thứ Năm",
+                fri: "Thứ Sáu",
+                sat: "Thứ Bảy",
+                sun: "Chủ Nhật"
+            };
+
+            const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+            dayKeys.forEach(day => {
+                const arr = matrix[day] || [false, false, false, false, false, false, false, false];
+                const checkedCount = arr.filter(x => x).length;
+                const isAllDone = checkedCount === arr.length;
+
+                const tr = document.createElement('tr');
+                tr.className = `hover:bg-slate-50 transition-colors ${isAllDone ? 'bg-emerald-50/20' : ''}`;
+
+                let rowHtml = `<td class="py-3 pl-2 font-bold text-slate-700 text-xs">${VietnameseDays[day]}</td>`;
+
+                for (let i = 0; i < 8; i++) {
+                    const checked = arr[i] ? 'checked' : '';
+                    rowHtml += `<td class="py-3 text-center">
+                        <input type="checkbox" onchange="toggleDayTask('${day}', ${i}, this.checked)" ${checked} class="h-4 w-4 rounded border-gray-300 text-[#869d7a] focus:ring-[#869d7a]">
+                    </td>`;
+                }
+
+                rowHtml += `<td class="py-3 text-center font-bold text-xs pr-2" id="day-ratio-${day}">
+                    <span class="${isAllDone ? 'text-emerald-600' : 'text-slate-400'}">${checkedCount}/8</span>
+                </td>`;
+
+                tr.innerHTML = rowHtml;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleDayTask(day, index, checked) {
+            const weekNum = activeTrackerWeek;
+            const matrix = JSON.parse(localStorage.getItem(`ielts_week_${weekNum}_checklist`));
+            
+            if (!matrix[day]) {
+                matrix[day] = [false, false, false, false, false, false, false, false];
+            }
+
+            matrix[day][index] = checked;
+            localStorage.setItem(`ielts_week_${weekNum}_checklist`, JSON.stringify(matrix));
+
+            // Visual feedback update inline
+            const checkedCount = matrix[day].filter(x => x).length;
+            const el = document.getElementById(`day-ratio-${day}`);
+            if (el) {
+                el.innerHTML = `<span class="${checkedCount === 8 ? 'text-emerald-600' : 'text-slate-400'}">${checkedCount}/8</span>`;
+            }
+        }
+
+        function updatePerformanceIndicators() {
+            const valC = document.getElementById('slider-consistency').value;
+            const valF = document.getElementById('slider-focus').value;
+
+            document.getElementById('consistency-val').innerText = `${valC}/10`;
+            document.getElementById('focus-val').innerText = `${valF}/10`;
+
+            // Persistent save sliders indicators
+            const weekNum = activeTrackerWeek;
+            localStorage.setItem(`ielts_week_${weekNum}_perf`, JSON.stringify({
+                consistency: parseInt(valC),
+                focus: parseInt(valF)
+            }));
+        }
+
+        function saveCurrentWeekChanges() {
+            const weekNum = activeTrackerWeek;
+            const weakness = document.getElementById('notes-weakness').value;
+            const mistakes = document.getElementById('notes-mistakes').value;
+
+            localStorage.setItem(`ielts_week_${weekNum}_notes`, JSON.stringify({
+                weakness: weakness,
+                mistakes: mistakes
+            }));
+        }
+
+        // Error Logs Logic
+        function switchErrorLogCategory(category) {
+            activeErrorCategory = category;
+
+            // Handle styling states on subtabs
+            ['writing', 'speaking', 'reading', 'listening'].forEach(c => {
+                const btn = document.getElementById(`err-tab-${c}`);
+                if (btn) {
+                    if (c === category) {
+                        btn.className = "px-4 py-2 text-xs font-bold border-b-2 border-[#869d7a] text-[#869d7a]";
+                    } else {
+                        btn.className = "px-4 py-2 text-xs font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600";
+                    }
+                }
+            });
+
+            renderErrorLogs();
+        }
+
+        function renderErrorLogs() {
+            const container = document.getElementById('error-logs-container');
+            container.innerHTML = '';
+
+            const logs = JSON.parse(localStorage.getItem('ielts_error_logs')) || DEFAULT_ERROR_LOGS;
+            const targetArr = logs[activeErrorCategory] || [];
+
+            if (targetArr.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card p-8 text-center text-slate-400 col-span-2 text-xs">
+                        🍀 Chưa lưu nhận định lỗi sai nào cho kỹ năng này.
+                    </div>
+                `;
+                return;
+            }
+
+            targetArr.forEach(item => {
+                container.innerHTML += `
+                    <div class="glass-card p-5 relative overflow-hidden group">
+                        <button onclick="deleteErrorLog(${item.id})" class="absolute right-4 top-4 text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs" title="Xóa lỗi">
+                            🗑️
+                        </button>
+                        <span class="text-[10px] font-bold text-[#cb8b8b] uppercase tracking-wider block mb-1">⚠️ ${item.type}</span>
+                        <div class="space-y-2 mt-2">
+                            <div class="p-2.5 rounded-lg bg-rose-50/50 border border-rose-100 text-xs">
+                                <span class="font-bold text-rose-700 block mb-0.5">❌ Mắc lỗi:</span>
+                                <span class="text-slate-700 block font-serif italic">${item.mistake}</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-emerald-50/50 border border-emerald-100 text-xs">
+                                <span class="font-bold text-emerald-700 block mb-0.5">✅ Sửa đúng:</span>
+                                <span class="text-slate-700 block font-serif italic">${item.correction}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openAddErrorModal() {
+            document.getElementById('err-input-skill').value = activeErrorCategory;
+            document.getElementById('err-input-type').value = "";
+            document.getElementById('err-input-mistake').value = "";
+            document.getElementById('err-input-correction').value = "";
             document.getElementById('add-error-modal').classList.remove('hidden');
         }
 
@@ -512,194 +1096,181 @@
             document.getElementById('add-error-modal').classList.add('hidden');
         }
 
-        function saveNewError() {
-            const skill = document.getElementById('error-skill-type').value;
-            const col1 = document.getElementById('error-col1').value;
-            const col2 = document.getElementById('error-col2').value;
-            const col3 = document.getElementById('error-col3').value;
+        function submitNewError(e) {
+            e.preventDefault();
+            const skill = document.getElementById('err-input-skill').value;
+            const type = document.getElementById('err-input-type').value;
+            const mistake = document.getElementById('err-input-mistake').value;
+            const correction = document.getElementById('err-input-correction').value;
 
-            if (!col1 && !col2 && !col3) {
-                closeAddErrorModal();
-                return; // Không lưu nếu tất cả trống
+            const logs = JSON.parse(localStorage.getItem('ielts_error_logs')) || DEFAULT_ERROR_LOGS;
+            const newId = Date.now();
+
+            if (!logs[skill]) {
+                logs[skill] = [];
             }
 
-            const tbody = document.getElementById(`${skill}-tbody`);
-            if (tbody) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-4 font-semibold">${col1 || '-'}</td>
-                    <td class="p-4 text-red-500/80 italic">${col2 || '-'}</td>
-                    <td class="p-4 text-sage font-medium">${col3 || '-'}</td>
-                `;
-                tbody.appendChild(tr);
-            }
+            logs[skill].unshift({
+                id: newId,
+                type: type,
+                mistake: mistake,
+                correction: correction
+            });
+
+            localStorage.setItem('ielts_error_logs', JSON.stringify(logs));
             closeAddErrorModal();
+            
+            // Auto switch to modified view
+            switchErrorLogCategory(skill);
         }
 
-        // --- NEW LOGIC: Add Vocab Modals ---
-        function openAddVocabModal() {
-            document.getElementById('vocab-topic-name').value = '';
-            document.getElementById('vocab-topic-icon').value = '';
-            document.getElementById('vocab-words').value = '';
-            document.getElementById('add-vocab-modal').classList.remove('hidden');
+        function deleteErrorLog(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa mục ghi chú lỗi này?')) return;
+
+            const logs = JSON.parse(localStorage.getItem('ielts_error_logs')) || DEFAULT_ERROR_LOGS;
+            if (logs[activeErrorCategory]) {
+                logs[activeErrorCategory] = logs[activeErrorCategory].filter(x => x.id !== id);
+                localStorage.setItem('ielts_error_logs', JSON.stringify(logs));
+                renderErrorLogs();
+            }
         }
 
-        function closeAddVocabModal() {
-            document.getElementById('add-vocab-modal').classList.add('hidden');
+        // Vocabulary Bank Logic
+        function renderVocabTopics() {
+            const container = document.getElementById('vocab-topics-container');
+            container.innerHTML = '';
+
+            const topics = JSON.parse(localStorage.getItem('ielts_vocab_topics')) || DEFAULT_VOCAB_TOPICS;
+
+            topics.forEach(topic => {
+                container.innerHTML += `
+                    <div class="glass-card p-5 relative overflow-hidden group">
+                        <button onclick="deleteVocabTopic(${topic.id})" class="absolute right-4 top-4 text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs" title="Xóa chủ đề">
+                            🗑️
+                        </button>
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-2xl">${topic.emoji || '📚'}</span>
+                            <h3 class="text-sm font-bold text-slate-800">${topic.title}</h3>
+                        </div>
+                        <div class="space-y-2 mt-2">
+                            ${topic.words.map(w => `
+                                <div class="p-2 bg-slate-50/50 rounded-lg text-xs hover:bg-slate-50 transition-colors">
+                                    <div class="font-bold text-slate-700">${w.word}</div>
+                                    <div class="text-slate-400 text-[10px] mt-0.5">${w.meaning}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        function saveNewVocab() {
-            const name = document.getElementById('vocab-topic-name').value.trim() || 'New Topic';
-            const icon = document.getElementById('vocab-topic-icon').value.trim() || '📌';
-            const wordsText = document.getElementById('vocab-words').value;
-            
-            const wordsArray = wordsText.split('\n').filter(w => w.trim() !== '');
-            const wordsHTML = wordsArray.map(w => `<li>• ${w.trim()}</li>`).join('');
-
-            const grid = document.getElementById('vocab-grid');
-            
-            // Create new vocab card
-            const newCard = document.createElement('div');
-            newCard.className = 'glass-card p-6';
-            newCard.innerHTML = `
-                <h3 class="font-bold text-clay mb-3 flex justify-between items-center" style="color: #d4a373;">
-                    ${name} <span>${icon}</span>
-                </h3>
-                <ul class="text-sm space-y-2 text-gray-600">
-                    ${wordsHTML || '<li class="italic text-gray-400">Chưa có từ vựng</li>'}
-                </ul>
-            `;
-            
-            // Insert it before the "Add New" button (which is the last child)
-            const addButton = grid.lastElementChild;
-            grid.insertBefore(newCard, addButton);
-            
-            closeAddVocabModal();
+        function openAddTopicModal() {
+            document.getElementById('topic-input-title').value = "";
+            document.getElementById('topic-input-emoji').value = "📚";
+            document.getElementById('topic-input-words').value = "";
+            document.getElementById('add-topic-modal').classList.remove('hidden');
         }
 
-        // Initialize Daily Tracker Table
-        const days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
-        const trackerBody = document.getElementById('trackerBody');
-        
-        days.forEach(day => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="p-4 text-sm font-medium text-gray-700">${day}</td>
-                ${Array(8).fill(0).map(() => `
-                    <td class="p-4 text-center">
-                        <input type="checkbox" class="w-4 h-4 rounded text-sage focus:ring-sage border-gray-300">
-                    </td>
-                `).join('')}
-            `;
-            trackerBody.appendChild(row);
-        });
+        function closeAddTopicModal() {
+            document.getElementById('add-topic-modal').classList.add('hidden');
+        }
 
-        // AI Assistant Integration (Gemini API)
-        async function askAI(goal) {
+        function submitNewTopic(e) {
+            e.preventDefault();
+            const title = document.getElementById('topic-input-title').value;
+            const emoji = document.getElementById('topic-input-emoji').value;
+            const rawWords = document.getElementById('topic-input-words').value;
+
+            // Parse lines to structure
+            const lines = rawWords.split('\n');
+            const wordsList = [];
+
+            lines.forEach(line => {
+                if (line.includes('|')) {
+                    const parts = line.split('|');
+                    wordsList.push({
+                        word: parts[0].trim(),
+                        meaning: parts[1].trim()
+                    });
+                } else if (line.trim() !== "") {
+                    wordsList.push({
+                        word: line.trim(),
+                        meaning: "Chưa cập nhật ý nghĩa"
+                    });
+                }
+            });
+
+            const topics = JSON.parse(localStorage.getItem('ielts_vocab_topics')) || DEFAULT_VOCAB_TOPICS;
+            topics.unshift({
+                id: Date.now(),
+                emoji: emoji,
+                title: title,
+                words: wordsList
+            });
+
+            localStorage.setItem('ielts_vocab_topics', JSON.stringify(topics));
+            closeAddTopicModal();
+            renderVocabTopics();
+        }
+
+        function deleteVocabTopic(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa chủ đề từ vựng này?')) return;
+
+            let topics = JSON.parse(localStorage.getItem('ielts_vocab_topics')) || DEFAULT_VOCAB_TOPICS;
+            topics = topics.filter(x => x.id !== id);
+            localStorage.setItem('ielts_vocab_topics', JSON.stringify(topics));
+            renderVocabTopics();
+        }
+
+        // Simulated AI Strategic Tutor recommendations Engine
+        const AI_ADVICE_DATABASE = {
+            1: "### ✨ CHIẾN LƯỢC THÁNG 1: XÂY NỀN & SỬA LỖI\n\n- **Trọng tâm Ngữ pháp:** Đừng nôn nóng làm đề thi thật. Hãy học chắc cách viết câu đơn, câu ghép và câu phức không lỗi trước. Sửa triệt để lỗi chia động từ.\n- **Nghe chính tả:** Hãy mở các hội thoại ngắn (Cambridge Section 1 hoặc BBC Learning English) để luyện chép chính tả mỗi ngày 15 phút. Điều này cải thiện khả năng lọc âm chính xác.",
+            2: "### ✨ CHIẾN LƯỢC THÁNG 2: ĐỊNH HƯỚNG FORMAT\n\n- **Hiểu cấu trúc bài:** Bạn cần ghi nhớ chi tiết cấu trúc bài thi, dạng câu hỏi Listening & Reading để có phản xạ nhanh.\n- **Speaking Part 1:** Đừng cố trả lời quá dài hoặc nhồi nhét từ vựng đao to búa lớn. Tập nói trôi chảy, đúng ngữ pháp và phát âm rõ ràng phụ âm đuôi (s/es/ed).",
+            3: "### ✨ CHIẾN LƯỢC THÁNG 3: CHUYÊN SÂU READING & LISTENING\n\n- **Keyword & Synonym:** Bản chất của đề đọc IELTS là tìm từ đồng nghĩa. Hãy lập một cuốn sổ ghi lại các cụm từ tương đồng (Paraphrasing Bank) sau mỗi đề test.\n- **Scanning:** Chỉ lướt nhanh tìm tên riêng, số liệu, năm. Tránh sa đà vào dịch từng từ khó.",
+            4: "### ✨ CHIẾN LƯỢC THÁNG 4: ĐỘT PHÁ SPEAKING & WRITING\n\n- **Writing Task 2:** Tập trung giải cấu trúc các dạng câu hỏi lớn (Opinion, Discussion, Solution). Mỗi bài viết cần đủ 4 phần rõ rệt.\n- **Speaking Part 2:** Hãy luyện chuẩn bị nhanh dàn bài (Brainstorming) trong 1 phút bằng sơ đồ Mindmap.",
+            5: "### ✨ CHIẾN LƯỢC THÁNG 5: CỦNG CỐ & CHẠM MỐC 6.5\n\n- **Làm bài dưới áp lực:** Hãy làm bài thi thử căn thời gian thật (Listening không pause, Reading đúng 60 phút). Việc này giúp rèn luyện tinh thần bền bỉ.\n- **Sửa sai triệt để:** Dành thời gian sửa lỗi gấp đôi thời gian làm đề. Hãy ghi rõ tại sao bạn chọn đáp án sai đó.",
+            6: "### ✨ CHIẾN LƯỢC THÁNG 6: TẬP TRUNG LUYỆN ĐỀ PHỐI HỢP\n\n- **Nâng cấp từ Academic:** Hãy chuyển các động từ thường dùng sang dạng chuyên nghiệp hơn (ví dụ: 'change' -> 'alter', 'use' -> 'utilize').\n- **Luyện nói trước gương:** Ghi âm lại bài nói để phát hiện ngay các lỗi lặp từ hay ngắc ngứ.",
+            7: "### ✨ CHIẾN LƯỢC THÁNG 7: TỐI ƯU HÓA CHIẾN THUẬT\n\n- **Lọc thông tin gây nhiễu (Distractors):** Ghi chú lại các bẫy nghe thường gặp như thay đổi quyết định đột ngột (ví dụ: 'No, let's meet on Wednesday instead').\n- **Quản lý thời gian:** Dành đúng 20 phút cho Writing Task 1 và 40 phút cho Task 2.",
+            8: "### ✨ CHIẾN LƯỢC THÁNG 8: MÔ PHỎNG VỀ ĐÍCH\n\n- **Tâm lý phòng thi:** Tạo thói quen làm bài trong khung giờ thi thực tế (buổi sáng). Ăn uống, điều độ để bộ não phản xạ tốt nhất.\n- **Giữ phong độ:** Không nạp thêm quá nhiều kiến thức mới gây rối trí. Hãy ôn lại vững vàng những gì mình đang có."
+        };
+
+        function triggerAIEngine(monthNum) {
             const modal = document.getElementById('ai-modal');
             const content = document.getElementById('ai-content');
+            content.innerHTML = '<span class="text-slate-400 italic">🤖 AI Tutor đang phân tích dữ liệu lộ trình học của bạn...</span>';
             modal.classList.remove('hidden');
-            content.innerHTML = '<span class="animate-pulse">Đang phân tích chiến lược phù hợp nhất cho bạn...</span>';
-            
-            const apiKey = ""; // API key is auto-injected by the environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-            
-            const payload = {
-                contents: [{ parts: [{ text: `Đóng vai một giáo viên IELTS chuyên nghiệp. Học viên đang ở giai đoạn: "${goal}". Hãy cung cấp 3 lời khuyên cốt lõi, ngắn gọn (mỗi lời khuyên 1-2 câu) và thực tế nhất để học viên tập trung trong giai đoạn này.` }] }]
-            };
 
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if (result.candidates && result.candidates[0].content.parts[0].text) {
-                    content.innerText = result.candidates[0].content.parts[0].text;
-                } else {
-                    content.innerText = "Có lỗi xảy ra khi lấy lời khuyên. Vui lòng thử lại.";
-                }
-            } catch (e) {
-                content.innerText = "Không thể kết nối với AI. Vui lòng thử lại sau.";
-            }
+            const textToPrint = AI_ADVICE_DATABASE[monthNum] || "### ✨ LỜI KHUYÊN TỔNG QUAN\nKeep consistent and practice every single day!";
+            
+            // Format markdown headers to bold lists
+            let formattedText = textToPrint
+                .replace(/### (.*)/g, '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">$1</h4>')
+                .replace(/\- \*\*(.*?)\*\*(.*)/g, '<div class="mb-2"><strong class="text-[#869d7a]">$1</strong>$2</div>');
+
+            // Simulate typing effect
+            setTimeout(() => {
+                content.innerHTML = formattedText;
+            }, 600);
         }
 
         function closeAI() {
             document.getElementById('ai-modal').classList.add('hidden');
         }
 
-        // Initialize Mock Test Chart (Full 4 skills & Updated Timeline)
-        const ctx = document.getElementById('mockTestChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Tháng 1 (Th.5-6)', 'Tháng 2 (Th.7)', 'Tháng 3 (Th.8)', 'Tháng 4 (Th.9)', 'Tháng 5 (Th.10)', 'Tháng 6 (Th.11)', 'Tháng 7 (Th.12)', 'Tháng 8 (Th.1)'],
-                datasets: [
-                    {
-                        label: 'Listening',
-                        data: [6.0, 6.5, 6.5, 7.0, 7.0, 7.5, 7.5, 8.0],
-                        borderColor: '#869d7a', // Sage
-                        backgroundColor: 'transparent',
-                        tension: 0.3,
-                        pointRadius: 4
-                    },
-                    {
-                        label: 'Reading',
-                        data: [6.5, 6.5, 7.0, 7.0, 7.5, 7.5, 8.0, 8.0],
-                        borderColor: '#d4a373', // Clay
-                        backgroundColor: 'transparent',
-                        tension: 0.3,
-                        pointRadius: 4
-                    },
-                    {
-                        label: 'Writing',
-                        data: [5.5, 6.0, 6.0, 6.5, 6.5, 6.5, 7.0, 7.0],
-                        borderColor: '#64748b', // Slate
-                        backgroundColor: 'transparent',
-                        tension: 0.3,
-                        pointRadius: 4
-                    },
-                    {
-                        label: 'Speaking',
-                        data: [5.5, 5.5, 6.0, 6.5, 6.5, 7.0, 7.0, 7.0],
-                        borderColor: '#cb8b8b', // Rose/Terracotta
-                        backgroundColor: 'transparent',
-                        tension: 0.3,
-                        pointRadius: 4
-                    },
-                    {
-                        label: 'Overall Target',
-                        data: [6.0, 6.5, 6.5, 6.5, 6.5, 7.0, 7.0, 7.0],
-                        borderColor: '#4a5568', // Dark Gray
-                        borderDash: [5, 5],
-                        backgroundColor: 'transparent',
-                        tension: 0,
-                        pointRadius: 0
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            font: { size: 10 }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        min: 5.0,
-                        max: 9.0,
-                        ticks: { stepSize: 0.5 }
-                    }
-                }
-            }
-        });
+        // Initial setup on Window Load
+        window.onload = function () {
+            // Setup Database keys
+            initializeDatabase();
+
+            // Set up views
+            switchTab('dashboard');
+            renderMonthlyCheckpointsGrid();
+            renderMockChart();
+            switchWeek(1);
+            renderErrorLogs();
+            renderVocabTopics();
+        };
     </script>
 </body>
 </html>
